@@ -58,6 +58,29 @@ for (let i = 0; i < engines.all().length; i++) {
         break;
     }
 }
+if (helper.监听键 == "上" || helper.监听键 == "下") {
+    threads.start(function () {
+        sleep(100);
+        events.observeKey();
+        if (helper.监听键 == "上") {
+            events.setKeyInterceptionEnabled("volume_up", true);
+        } else if (helper.监听键 == "下") {
+            events.setKeyInterceptionEnabled("volume_down", true);
+        }
+        events.on("key_down", function (keyCode, events) {
+            if (keyCode == keys.volume_up && helper.监听键 == "上") {
+                toastLog("音量上键被按下，战双辅助将停止运行");
+                Floaty.emit("展示文本", "状态", "状态：暂停，音量上键按下");
+                Floaty.emit("暂停", "结束程序");
+            } else if (keyCode == keys.volume_down && helper.监听键 == "下") {
+                toastLog("音量下键被按下，战双辅助将停止运行");
+                Floaty.emit("展示文本", "状态", "状态：暂停，音量下键按下");
+                Floaty.emit("暂停", "结束程序");
+            }
+        });
+
+    });
+}
 
 //指向Android/data/包名/file 路径
 var package_path = context.getExternalFilesDir(null).getAbsolutePath() + "/"
@@ -133,11 +156,15 @@ function 主程序() {
         //消耗血清
         战斗();
     }
+    纷争战区();
     便笺(1000);
 
     //
     领取任务奖励();
     领取手册经验();
+    if(helper.返回桌面){
+        home();
+    }
     Floaty.emit("展示文本", "状态", "状态：主程序暂停中");
     Floaty.emit("暂停", "结束程序");
 }
@@ -223,8 +250,8 @@ function 进入主页() {
     while (true) {
         sleep(1000);
         ITimg.picture("返回", { action: 0, timing: 1500, area: "左上半屏", })
-        if (ITimg.ocr("任务", { timing: 3000, area: "右半屏", }) == true && ITimg.ocr("战斗", { timing: 3000, area: "右半屏", refresh: false, }) == true) {
-            ITimg.picture("主页-展开", { action: 0, timing: 1000, });
+        if (ITimg.ocr("任务", { timing: 3000, area: "右半屏", part: true, }) == true && ITimg.ocr("战斗", { timing: 3000, area: "右半屏", refresh: false, part: true, }) == true) {
+            click(coordinate.coordinate.主页展开.x, coordinate.coordinate.主页展开.y)
             sleep(1000)
             break
         } else if (!ITimg.picture("返回", { action: 0, timing: 1500, area: "左上半屏" })) {
@@ -236,7 +263,8 @@ function 进入主页() {
                 启动();
             }
             ITimg.ocr("更新", { action: 0, timing: 10000, area: "右下半屏" });
-            click(height / 2, width - 100);
+            ITimg.ocr("确定", { action: 0, timing: 2000, area: "右下半屏" });
+            click(height / 2, width - 80);
 
         }
     }
@@ -263,7 +291,7 @@ function 采购() {
 
         if (ITimg.ocr("免费", { action: 1, timing: 1500, area: "左上半屏", part: true, })) {
             ITimg.ocr("购买", { action: 1, timing: 1500, area: "下半屏", part: true })
-            click(height / 2, width - 100);
+            click(height / 2, width - 80);
             sleep(1000);
             let week = ITimg.ocr("每周限购1", { action: 5, area: "左上半屏", part: true });
             let free = ITimg.ocr("免费", { action: 5, refresh: false });
@@ -273,7 +301,7 @@ function 采购() {
                     click(free.left, free.top);
                     sleep(1000);
                     ITimg.ocr("购买", { action: 1, timing: 1500, area: "下半屏", part: true })
-                    click(height / 2, width - 100);
+                    click(height / 2, width - 80);
                 }
             }
             helper.任务状态.日常补给 = true;
@@ -351,14 +379,17 @@ function 指挥局() {
   */
     //等待1秒
     sleep(1000)
-    if (ITimg.ocr("今日运势", { action: 1, timing: 2500, area: "右半屏", })) {
+    if (ITimg.ocr("算一签", { action: 1, timing: 2500, area: "右半屏", })) {
         //点击返回
         click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
         sleep(1500);
         helper.任务状态.妙算神机 = true;
         tool.writeJSON("任务状态", helper.任务状态);
+    } else if (ITimg.ocr("查看签文", { action: 1, timing: 2500, area: "右半屏", })) {
+        helper.任务状态.妙算神机 = true;
+        tool.writeJSON("任务状态", helper.任务状态);
     } else {
-        toastLog("无法匹配到今日运势,请确认移动小人步骤是否可用");
+        toastLog("无法匹配到算一签,请确认移动小人步骤是否可用");
     }
     click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
     sleep(1500)
@@ -400,11 +431,11 @@ function 宿舍() {
     //
     sleep(1000);
     if (ITimg.ocr("任务", { action: 1, timing: 2000, area: "右上半屏", })) {
+        ITimg.ocr("每日", { action: 1, timing: 1000, area: "左半屏", })
 
         if (ITimg.ocr("今日任务已完成", { part: true, })) {
             toastLog("今日宿舍任务已完成");
         } else {
-
             if (ITimg.ocr("一键领取", { action: 1, timing: 1500, refresh: true })) {
                 //返回 ,关闭奖励显示
                 click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
@@ -430,14 +461,14 @@ function 宿舍_委托() {
     if (ITimg.picture("宿舍-委托", { action: 0, timing: 2500, refresh: false, })) {
 
         if (ITimg.ocr("领取奖励", { action: 1, timing: 1500, area: "下半屏" })) {
-                for (let i = 0; i < 5; i++) {
-                   
+            for (let i = 0; i < 5; i++) {
+
                 click(height / 2, width - 50);
                 sleep(1200);
             }
         };
         //红,橙,紫,蓝,绿级别的委托
-        let entrusted_color = ["#d3333b", "#dd6b49", "#bc45ab", "#3f78ce", "#469646"];
+        let entrusted_color = ["#d3333b", "#e55c35", "#dd6b49", "#bc45ab", "#3f78ce", "#469646"];
         for (let i = 0; i < entrusted_color.length; i++) {
             //识别不到有空闲队伍时不接取委托任务
             if (!ITimg.ocr("空闲中", { timing: 1000, area: "下半屏" })) {
@@ -457,6 +488,7 @@ function 宿舍_委托() {
                 click(entrusted.x, entrusted.y);
                 sleep(1500);
                 if (!ITimg.ocr("接取委托", { action: 1, timing: 1500, area: [parseInt(height / 1.5), parseInt(width / 2), parseInt(height - (height / 1.5)), parseInt(width / 2)], part: true, })) {
+                    click(height / 2, width - 50)
                     continue;
                 }
                 let multiple;
@@ -571,14 +603,14 @@ function 宿舍_执勤() {
     //有bug,执勤过了,没一会又可以选择,但是显示工位已被使用
     ITimg.ocr("取消", { action: 1, timing: 1000, area: "下半屏", part: true });
 
-    if(!ITimg.ocr("一键代工", { action: 1, timing: 1000, area: "下半屏", part: true, refresh: false })){
-        ITimg.ocr("一键代工", { action: 1, timing: 1000, area: "下半屏", part: true })
+    if (!ITimg.ocr("一键代工", { action: 1, timing: 1000, area: "下半屏", part: true, refresh: false })) {
+        ITimg.ocr("一键代", { action: 1, timing: 1000, area: "下半屏", part: true })
     };
     if (ITimg.ocr("立即完成", { action: 1, timing: 1500, area: "右下半屏" }) != false && duty.chosen >= 8) {
         helper.任务状态.宿舍执勤 = true;
         tool.writeJSON("任务状态", helper.任务状态);
     }
-    click(height / 2, width - 100);
+    click(height / 2, width - 80);
     sleep(1500);
 
     //返回
@@ -588,8 +620,7 @@ function 宿舍_执勤() {
 }
 
 
-function 
-宿舍_抚摸() {
+function 宿舍_抚摸() {
 
     sleep(1000);
     if (!ITimg.ocr("执勤", { part: true, area: "右下半屏" })) {
@@ -723,51 +754,51 @@ function
             for (let n = 0; n < petting; n++) {
 
                 var height = device.height,
-                width = device.width;
-     
-     
-            var points = [random(999,1100)];
-     
-            var x_p = 0.15;
-            var y_p = 0.7;
-     
-     
-            for (let i = 0; i < 6; i++) {
-              console.info("数值:",2.6-x_p,",x:",parseInt(height/(2.6-x_p)))
-                console.info("数值:",0.80+y_p,"y:",parseInt(width/(0.80+y_p)))
-            
-                points.push([parseInt(height / (2.6 - x_p)) + random(-20, 20), parseInt(width / (0.80 + y_p)) + random(-30, 10)]);
-                x_p = x_p + 0.15;
-                y_p = y_p + 0.7
-            }
-     
-            x_p = 0.1;
-            y_p = 0.7;
-     
-            for (let i = 0; i < 6; i++) {
-                console.warn("数值:",1.7+x_p,",x:",parseInt(height/(1.7+x_p)))
-                console.warn("数值:",5.6-y_p,"y:",parseInt(width/(5.6-y_p)))
-            
-                points.push([parseInt(height / (1.7 + x_p)) + random(-20, 20), parseInt(width / (5.6 - y_p)) + random(-30, 10)]);
-                x_p = x_p + 0.15;
-                y_p = y_p + 0.7
-     
-            }
-     
-     
-            x_p = 0.1;
-            y_p = 0.7;
-     
-            for (let i = 0; i < 6; i++) {
-           points.push([parseInt(height / (2.6 - x_p)) + random(-20, 20), parseInt(width / (0.80 + y_p)) + random(-30, 10)]);
-                x_p = x_p + 0.15;
-                y_p = y_p + 0.7
-            }
-     
-            gesture.apply(null, points);
-     
-     
-          
+                    width = device.width;
+
+
+                var points = [random(999, 1100)];
+
+                var x_p = 0.15;
+                var y_p = 0.7;
+
+
+                for (let i = 0; i < 6; i++) {
+                    console.info("数值:", 2.6 - x_p, ",x:", parseInt(height / (2.6 - x_p)))
+                    console.info("数值:", 0.80 + y_p, "y:", parseInt(width / (0.80 + y_p)))
+
+                    points.push([parseInt(height / (2.6 - x_p)) + random(-20, 20), parseInt(width / (0.80 + y_p)) + random(-30, 10)]);
+                    x_p = x_p + 0.15;
+                    y_p = y_p + 0.7
+                }
+
+                x_p = 0.1;
+                y_p = 0.7;
+
+                for (let i = 0; i < 6; i++) {
+                    console.warn("数值:", 1.7 + x_p, ",x:", parseInt(height / (1.7 + x_p)))
+                    console.warn("数值:", 5.6 - y_p, "y:", parseInt(width / (5.6 - y_p)))
+
+                    points.push([parseInt(height / (1.7 + x_p)) + random(-20, 20), parseInt(width / (5.6 - y_p)) + random(-30, 10)]);
+                    x_p = x_p + 0.15;
+                    y_p = y_p + 0.7
+
+                }
+
+
+                x_p = 0.1;
+                y_p = 0.7;
+
+                for (let i = 0; i < 6; i++) {
+                    points.push([parseInt(height / (2.6 - x_p)) + random(-20, 20), parseInt(width / (0.80 + y_p)) + random(-30, 10)]);
+                    x_p = x_p + 0.15;
+                    y_p = y_p + 0.7
+                }
+
+                gesture.apply(null, points);
+
+
+
                 if (n != 3) {
                     sleep(3000);
                 }
@@ -821,10 +852,14 @@ function 宿舍_家具制造() {
         ITimg.ocr("建造", { action: 1, timing: 3000, area: "右下半屏", });
         //点击家具制造第一位,领取家具
         click(frcx(1300), frcy(400));
-        sleep(1500);
-        if (ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 1000, area: "右上半屏", })) {
+        sleep(2000);
+        if (ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 1000,nods:1000, area: "右上半屏", })) {
             helper.任务状态.家具制造 = true;
             tool.writeJSON("任务状态", helper.任务状态);
+        }else if (ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 1000, area: "右半屏", })) {
+            helper.任务状态.家具制造 = true;
+            tool.writeJSON("任务状态", helper.任务状态);
+
         };
         sleep(1000);
         //返回
@@ -978,7 +1013,7 @@ function 战斗() {
         sleep(500);
         if (!Timg.ocr("胜利并结束", { action: 0, timing: 10000, area: "左半屏" })) {
             //在新线程中运行作战方案,解决冲突
-            fight_thread = threads.start(作战)
+            fight_thread = threads.start(作战);
         }
         sleep(1000 * 15)
     }
@@ -1015,6 +1050,166 @@ function 战斗() {
         click(coordinate.coordinate.主页面.x, coordinate.coordinate.主页面.y);
         sleep(3000)
     }
+}
+
+function 纷争战区() {
+    if(!helper.纷争战区.自动){
+        return
+    }
+    let day = new Date().getDay();
+    let hours = new Date().getHours();
+    switch (day) {
+        case 2:
+        case 5:
+        case 6:
+            helper.纷争战区.战斗期 = true;
+            break
+        case 1:
+        case 4:
+
+            if (hours < 4) {
+                helper.纷争战区.战斗期 = false;
+            } else {
+                helper.纷争战区.战斗期 = true;
+                if (helper.纷争战区.周期 != day) {
+                    helper.纷争战区.周期 = day;
+                    helper.纷争战区.状态 = false;
+                }
+            }
+            break
+        case 3:
+        case 0:
+            if (hours > 17) {
+                helper.纷争战区.战斗期 = false;
+            } else {
+                helper.纷争战区.战斗期 = true;
+            }
+            break
+    }
+
+    tool.writeJSON("纷争战区", {
+        "自动":helper.纷争战区.自动,
+        "周期": helper.纷争战区.周期 ? helper.纷争战区.周期 : 0,
+        "状态": helper.纷争战区.状态 ? helper.纷争战区.状态 : false,
+        "战斗期": helper.纷争战区.战斗期
+    });
+    helper = tool.readJSON("helper");
+    if (helper.纷争战区.状态) {
+        log("纷争战区 此周期已完成")
+        return
+    }
+    if (!helper.纷争战区.战斗期) {
+        toastLog("纷争战区 战斗期未开放")
+        return
+    }
+
+    Floaty.emit("展示文本", "状态", "状态：准备纷争战区中")
+    if (ITimg.ocr("任务", { area: "右半屏", }) == false && ITimg.ocr("战斗", { area: "右半屏", refresh: false, }) == false) {
+        //返回主页
+        click(coordinate.coordinate.主页面.x, coordinate.coordinate.主页面.y);
+        sleep(3000)
+    };
+    if (!ITimg.ocr("战斗", { action: 2, timing: 3000, area: "右半屏", part: true, })) {
+        //都识别不到，改用固定坐标进入活动
+        click(frcx(1950), frcy(500))
+        sleep(3000)
+    }
+    //点击,进入纷争战区
+    click(frcx(190), frcy(420));
+    sleep(1000);
+    if (!ITimg.ocr("开始作战", { action: 1, timing: 3000, area: "右半屏", part: true, })) {
+        ITimg.ocr("开始作战", { action: 1, timing: 3000, })
+    };
+
+
+    let regional = [{
+        "name": "机械工厂",
+        "x": 370,
+        "y": 530
+    }, {
+        "name": "火焰轮回",
+        "x": 880,
+        "y": 320
+    }, {
+        "name": "镭射合金",
+        "x": 1460,
+        "y": 290
+    }, {
+        "name": "暗影深林",
+        "x": 1010,
+        "y": 700
+    }, {
+        "name": "猩红冰原",
+        "x": 1730,
+        "y": 730
+    }]
+    for (let i = 0; i < 5; i++) {
+        click(frcx(regional[i].x), frcy(regional[i].y));
+        sleep(1000);
+        if (!ITimg.ocr("确定", { action: 1, timing: 2000, area: "右半屏" })) {
+            if (ITimg.ocr("通关", { part: true, refresh: false, })||ITimg.ocr("个人积分", { part: true, refresh: false, })) {
+                if (ITimg.ocr("第1", { action: 4, timing: 1500, part: true, })) {
+                    if (ITimg.ocr("自动作战", { action: 1, timing: 2000, area: "下半屏", part: true, })) {
+                        click(height / 2, width - 80);
+                        sleep(300);
+                        click(height / 2, width - 80);
+                        sleep(500);
+                    }
+                }
+
+                if (ITimg.ocr("第2", { action: 4, timing: 1000, part: true, })) {
+                    if (ITimg.ocr("自动作战", { action: 1, timing: 2000, area: "下半屏", part: true, })) {
+                        click(height / 2, width - 80);
+                        sleep(500);
+                        click(height / 2, width - 80);
+                        sleep(500);
+                    }
+                }
+
+                if (ITimg.ocr("第3", { action: 4, timing: 1000, part: true, })||ITimg.ocr("3区域", { action: 4, timing: 1000, part: true,refresh:true,})) {
+                    if (ITimg.ocr("进入区域", { action: 1, timing: 2000, area: "下半屏", part: true, })) {
+                        if (!ITimg.ocr("队伍", { action: 1, timing: 2000, area: "右半屏", part: true, })) {
+                            ITimg.ocr("预设", { action: 1, timing: 2000, area: "右半屏", part: true, })
+                        }
+                        ITimg.ocr("选择", { action: 4, timing: 1000, area: "左半屏", });
+                        if(ITimg.ocr("作战开始", { action: 1, timing: 6000, area: "右半屏", part: true, })){
+                        //在新线程中运行作战方案,解决冲突
+                        fight_thread = threads.start(作战);
+                        while (true) {
+                            if (ITimg.ocr("退出战斗", { nods: 1500, area: "右半屏" })) {
+                                fight_thread = false;
+                                helper.纷争战区.状态 = true;
+                                sleep(3000);
+                                ITimg.ocr("退出战斗", { action:1, timing: 1000,refresh:false })
+                               click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
+                                sleep(2500);
+
+                                break;
+                            }
+                        }
+                    }
+                    }
+                }
+
+                continue;
+            }
+            click(height / 2, width - 80);
+            sleep(500);
+        }else{
+            i--;
+        };
+    }
+
+    tool.writeJSON("纷争战区", {
+        "自动":helper.纷争战区.自动,
+        "周期": helper.纷争战区.周期 ? helper.纷争战区.周期 : 1,
+        "状态": helper.纷争战区.状态 ? helper.纷争战区.状态 : false,
+        "战斗期": helper.纷争战区.战斗期
+    });
+    sleep(1000);
+    click(coordinate.coordinate.主页面.x, coordinate.coordinate.主页面.y);
+    sleep(1000);
+
 }
 
 function 作战() {
@@ -1078,7 +1273,7 @@ function 领取任务奖励(value) {
     }
     ITimg.ocr("每日", { action: 1, timing: 1500, area: "左上半屏", })
     if (ITimg.ocr("一键领取", { action: 0, timing: 7000, area: "上半屏", })) {
-        click(height / 2, width - 100);
+        click(height / 2, width - 80);
         sleep(1000);
         helper.任务状态.每日登录 = true;
         tool.writeJSON("任务状态", helper.任务状态);
@@ -1089,7 +1284,7 @@ function 领取任务奖励(value) {
         let active = ITimg.ocr("/100", { action: 5, area: "左半屏", part: true, })
         if (!active) {
             sleep(1000);
-            click(height / 2, width - 100);
+            click(height / 2, width - 80);
             sleep(1000);
             active = ITimg.ocr("/100", { action: 5, part: true, })
         }
@@ -1107,7 +1302,7 @@ function 领取任务奖励(value) {
                     click(active.left, active.top - 100);
                     click(active.left, active.top - 70);
                     sleep(5000);
-                    click(height / 2, width - 100)
+                    click(height / 2, width - 80)
                     sleep(500);
 
                 } else {
@@ -1115,7 +1310,7 @@ function 领取任务奖励(value) {
                     toastLog("无法获取100活跃度奖励坐标点位置\n点击固定坐标");
                     click(frcx(2040), frcy(960));
                     sleep(5000);
-                    click(height / 2, width - 100)
+                    click(height / 2, width - 80)
                     sleep(500);
                 }
             } else if (active.toString() == "NaN") {
@@ -1124,7 +1319,7 @@ function 领取任务奖励(value) {
                 //直接点击100活跃度奖励
                 click(frcx(2040), frcy(960));
                 sleep(5000);
-                click(height / 2, width - 100)
+                click(height / 2, width - 80)
                 sleep(500);
             } else {
                 toastLog("今日任务活跃度:" + active)
@@ -1133,7 +1328,7 @@ function 领取任务奖励(value) {
             toastLog("无法获取活跃度数值");
             click(frcx(2040), frcy(960));
             sleep(5000);
-            click(height / 2, width - 100)
+            click(height / 2, width - 80)
             sleep(500);
         }
     }
@@ -1160,12 +1355,12 @@ function 领取手册经验() {
     ITimg.ocr("确定", { action: 0, timing: 1000, area: "左半屏", })
     if (ITimg.ocr("评定任务", { action: 1, timing: 500, area: "左下半屏", })) {
         ITimg.ocr("一键领取", { action: 1, timing: 1500, area: "右下半屏", });
-        click(height / 2, width - 100);
+        click(height / 2, width - 80);
         sleep(1000);
     }
     if (ITimg.ocr("战略补给", { action: 1, timing: 500, area: "左上半屏", })) {
         ITimg.ocr("一键领取", { action: 1, timing: 1500, area: "右下半屏", });
-        click(height / 2, width - 100);
+        click(height / 2, width - 80);
         sleep(1000);
     }
     //点击返回
@@ -1175,6 +1370,9 @@ function 领取手册经验() {
 
 
 }
+
+
+
 
 function 便笺(sleep_, value) {
     sleep_ = sleep_ || 1000

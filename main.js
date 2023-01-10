@@ -18,11 +18,11 @@ importClass(com.google.android.material.bottomsheet.BottomSheetDialog);
 importClass(com.google.android.material.bottomsheet.BottomSheetBehavior);
 
 var tool = require('./utlis/app_tool.js');
-var use = {}
-use.prompt = require("./utlis/Dialog_Tips");
+var use = {};
 use.gallery = require("./utlis/gallery.js");
 use.gallery_link = JSON.parse(files.read("./library/gallery_link.json"));
 use.theme = require("./theme.js");
+use.Dialog_Tips = require("./utlis/Dialog_Tips.js");
 use.Floaty = tool.script_locate("Floaty");
 use.server = "http://43.138.239.186/qiao0314/";
 var language = use.theme.language.main;
@@ -62,6 +62,12 @@ var helper = tool.readJSON("helper", {
         "作战": false,
         "资源名称": "螺母作战"
     },
+    "纷争战区":{
+        "自动":false,
+        "周期": false,
+        "状态": false,
+        "战斗期": false
+    },
     "截图方式": "辅助",
     "包名": "com.kurogame.haru.hero",
     "模拟器": false,
@@ -71,7 +77,8 @@ var helper = tool.readJSON("helper", {
     "异常超时": false,
     "图片监测": true,
     "图片代理": true,
-    "坐标兼容": true,
+    "坐标兼容": false,
+    "自动授权截图":true,
     "多分辨率兼容": false,
     "最低电量": 30
 });
@@ -105,6 +112,15 @@ if (helper.注射血清 == undefined) {
     throw Error("初始化配置失败，已重置数据，请尝试重启应用")
 }
 
+if(!helper.纷争战区){
+    tool.writeJSON("纷争战区", {
+        "自动":false,
+        "周期": false,
+        "状态":false,
+        "战斗期": false
+    });
+    helper = tool.readJSON("helper");
+}
 
 /*
 threads.start(function () {
@@ -263,12 +279,12 @@ ui.layout(
                     </toolbar>
                     <ScrollView>
                         <vertical margin="20 0 20 50" >
-                            <widget-switch-se7en id="floatyCheckPermission" text="悬浮窗权限" checked="{{floaty.checkPermission() != false}}" padding="6 0 6 5" textSize="22"
+                            <widget-switch-se7en id="floatyCheckPermission" text="{{language['levitating_permissions']}}" checked="{{floaty.checkPermission() != false}}" padding="6 0 6 5" textSize="22"
                                 thumbSize="24"
                                 radius="24"
                                 textColor="{{use.theme.text}}"
                                 trackColor="{{use.theme.track}}" />
-                            <widget-switch-se7en id="autoService" text="无障碍服务" checked="{{auto.service != null}}" padding="6 6 6 6" textSize="22"
+                            <widget-switch-se7en id="autoService" text="{{language['accessibility_permissions']}}" checked="{{auto.service != null}}" padding="6 6 6 6" textSize="22"
                                 thumbSize="24" w="*"
                                 radius="24"
                                 textColor="{{use.theme.text}}"
@@ -317,7 +333,13 @@ ui.layout(
                                 padding="6 6 6 6"
                                 textSize="16" textColor="{{use.theme.text}}"
                             />
-
+                            <widget-switch-se7en
+                                id="disputes"
+                                checked="{{helper.纷争战区.自动}}"
+                                text="{{language['disputes']}}"
+                                padding="6 6 6 6"
+                                textSize="16" textColor="{{use.theme.text}}"
+                            />
                             <widget-switch-se7en
                                 id="task_award"
                                 checked="{{helper.任务奖励}}"
@@ -947,7 +969,6 @@ ui.emitter.on("resume", function () {
 });
 
 
-
 ui.depletion_serum.on("click", function (view) {
     checked = view.checked;
     ui.depletion_way.setVisibility(checked ? 0 : 8);
@@ -999,6 +1020,19 @@ ui.daily_serum.on("click", function (view) {
     checked = view.checked;
     tool.writeJSON("每日血清", checked)
 });
+
+ui.disputes.on("click",function(view){
+    checked = view.checked;
+    if(checked){
+        use.Dialog_Tips(language.warm_tips, language.disputes_tips);
+    }
+    tool.writeJSON("纷争战区", {
+        "自动":checked,
+        "周期": helper.纷争战区.周期,
+        "状态": helper.纷争战区.状态,
+        "战斗期": helper.纷争战区.战斗期
+    });
+})
 
 ui.aide_ac.on("click", function (view) {
     checked = view.checked;
@@ -1069,7 +1103,7 @@ ui._bg.on("click", function () {
     }, 600);
 
     if (floaty.checkPermission() == false) {
-        snakebar("请先授予战双悬浮窗权限！");
+        snakebar(language.levitating_permissions_tips);
         return;
     }
     if (ui.start.getText() == "停止运行" && !tool.script_locate("Floaty.js") == false) {
@@ -1094,7 +1128,7 @@ ui._bg.on("click", function () {
     if (!tool.script_locate("Floaty.js")) {
         if (helper.最低电量 != false) {
             if (!device.isCharging() && device.getBattery() < helper.最低电量) {
-                use.prompt.Dialog_Tips("温馨提示", "电量低于设定值" + helper.最低电量 + "%且未充电");
+                use.Dialog_Tips("温馨提示", "电量低于设定值" + helper.最低电量 + "%且未充电");
                 console.error("电量低于设定值" + helper.最低电量 + "%且未充电");
                 if (helper.震动) {
                     device.vibrate(1500);
@@ -1182,7 +1216,7 @@ ui.onlyhover.on("click", function () {
         ui.onlyhover.setEnabled(true)
     }, 800);
     if (floaty.checkPermission() == false) {
-        use.prompt.Dialog_Tips("温馨提示", "请先授予战双辅助悬浮窗权限！");
+        use.Dialog_Tips("温馨提示", "请先授予战双辅助悬浮窗权限！");
         return;
     }
 
@@ -1202,10 +1236,10 @@ function 开始运行jk(jk, tips_) {
 
     /*  if (ui.card.getHeight() == device.width) {
           console.error("请不要随便从横屏开始运行\n可能会导致悬浮窗大小异常");
-          use.prompt.Dialog_Tips("温馨提示", "请不要随便从横屏开始运行\n可能会导致悬浮窗大小异常")
+          use.Dialog_Tips("温馨提示", "请不要随便从横屏开始运行\n可能会导致悬浮窗大小异常")
       }*/
     if (!files.exists("./library/gallery/主页-展开.png")) {
-        use.prompt.Dialog_Tips("确认图库", "当前图库不完整,请在左上角头像-检查图库进行更换!")
+        use.Dialog_Tips("确认图库", "当前图库不完整,请在左上角头像-检查图库进行更换!")
         return;
     }
     let tuku_de = JSON.parse(files.read("./library/gallery/gallery_message.json"));
@@ -1348,7 +1382,7 @@ function 开始运行jk(jk, tips_) {
             }
         }
         if (!files.exists("./library/coordinate.json")) {
-            use.prompt.Dialog_Tips("确认坐标信息", "当前坐标信息不完整,请在左上角头像-坐标调试中配置");
+            use.Dialog_Tips("确认坐标信息", "当前坐标信息不完整,请在左上角头像-坐标调试中配置");
         }
     }
 
@@ -1357,7 +1391,7 @@ function 开始运行jk(jk, tips_) {
 
     if (interface.运行次数 <= 2) {
         jk = true;
-        use.prompt.Dialog_Tips("温馨提示", "战双辅助是图像识别脚本程序，在工作前必须先获取屏幕截图权限！！！\n\n如需程序自动允许辅助截图权限，请前往左上角头像-设置-打开自动允许辅助截图。如果在悬浮窗面板运行时无法申请辅助截图权限，请授权战双辅助后台弹出界面权限" +
+        use.Dialog_Tips("温馨提示", "战双辅助是图像识别脚本程序，在工作前必须先获取屏幕截图权限！！！\n\n如需程序自动允许辅助截图权限，请前往左上角头像-设置-打开自动允许辅助截图。如果在悬浮窗面板运行时无法申请辅助截图权限，请授权战双辅助后台弹出界面权限" +
             "\n\n如需程序自动打开明日方舟，请前往左上角头像-设置-打开自动启动方舟" +
             "\n\n不懂如何使用本程序？ 左上角头像-疑惑解答，或加群交流", "@drawable/ic_report_problem_black_48dp");
     }
@@ -1602,6 +1636,8 @@ function Update_UI(i) {
                 //更新模拟器，虚拟机按钮颜色
                 ui.floatyCheckPermission.setRadius(25);
                 ui.autoService.setRadius(25);
+                ui.disputes.setRadius(25);
+
                 ui._bgA.attr("cardCornerRadius", "25dp");
                 if (helper.血清) {
                     ui.depletion_serum.checked = true;
@@ -1725,7 +1761,7 @@ function new_ui(name, url) {
             toastLog("还没有相关内容")
             break;
         case '设置':
-
+            engines.execScriptFile("./activity/Basics.js");
             break;
         case '日志':
             let variabler = "'ui';var theme = " + JSON.stringify(use.theme) + ";var language = theme.language.initialize;";

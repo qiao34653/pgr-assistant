@@ -101,8 +101,8 @@ function 申请截图(simulator) {
     while (true) {
         $settings.setEnabled('foreground_service', true);
         sleep(10);
-        if (storages.create("Doolu_download").get("Capture_automatic") != false) {
-            if (storages.create("Doolu_download").get("Capture") != "true") {
+        if (helper.自动授权截图 != false) {
+            if (storages.create("warbler").get("Capture") != true) {
                 sleep(20)
                 console.verbose("确认线程启动中");
                 sleep(30)
@@ -113,7 +113,7 @@ function 申请截图(simulator) {
                             var checked;
                             if (checked = idMatches(/(.*checkbox.*|.*remember.*)/).packageNameContains("com.android.systemui").findOne(1000)) {
                                 checked.click();
-                                storages.create("Doolu_download").put("Capture", "true");
+                                storages.create("warbler").put("Capture", true);
                                 console.info("已勾选请求辅助截图权限不再显示");
                             };
                             //  };

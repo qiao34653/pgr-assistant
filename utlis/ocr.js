@@ -102,12 +102,13 @@ var ocr_modular = {
                     
                     retext = retext.replace(/(次数O)/g, '次数0');
                     retext = retext.replace(/(次数S)/g, '次数3');
+                    retext = retext.replace("領", "领");
                     retext = retext.replace("按取", "接取");
                     retext = retext.replace("奏托","委托");
                     retext = retext.replace("今运势","今日运势");
                     retext = retext.replace("宿含","宿舍");
                     retext = retext.replace(/(执勒|執勤)/,"执勤");
-                    retext = retext.replace(/(委魏|委)/,"委托");
+                    retext = retext.replace(/(委魏|委|娄)/,"委托");
                     switch (retext) {
                         default:
                             taglb.push({
