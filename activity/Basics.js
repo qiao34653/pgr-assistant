@@ -22,9 +22,6 @@ function zoom(x) {
 var package_name = context.getPackageName();
 require('./utlis/widget-switch-se7en');
 
-//main()
-//w="{{zoom(800)}}px" 改 w="{{zoom(830)}}"
-//function main() {
 
 ui.layout(
     <vertical id='exit'>

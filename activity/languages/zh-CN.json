@@ -6,6 +6,7 @@
         "depletion_way1":"资源",
         "depletion_way2":"活动",
         "resources_type":"稀有意识|装备经验|装备突破|成员经验|螺母作战|技能点",
+        "input_tips1":"挑战次数/使用血清上限:",
         "daily_serum":"领取每日血清",
         "aide_ac":"自动助理交流",
         "brilliant_calculations":"自动妙算神机",
@@ -57,6 +58,17 @@
         "self_starting":"允许应用自启动",
         "self_starting_description":"有无障碍异常/杀应用/应用闪退的情况时，请打开尝试\n是否已开启请以系统设置实际显示为准",
         "manageimage_run_script":"管理运行脚本"
+    },
+    "about":{
+         "name":"战双助手",
+         "apply_version":"应用版本:",
+         "engine_version":"引擎版本:",
+         "classify_text1":"联系作者",
+         "classify_text2":"应用相关",
+         "donation":"捐赠打赏",
+         "update_log":"更新日志",
+         "examine_update":"检查更新"
+        
     },
     "update":{
         "show_history_update_info": "查看历史更新",

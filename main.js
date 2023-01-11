@@ -20,7 +20,6 @@ importClass(com.google.android.material.bottomsheet.BottomSheetBehavior);
 var tool = require('./utlis/app_tool.js');
 var use = {};
 use.gallery = require("./utlis/gallery.js");
-use.gallery_link = JSON.parse(files.read("./library/gallery_link.json"));
 use.theme = require("./theme.js");
 use.Dialog_Tips = require("./utlis/Dialog_Tips.js");
 use.Floaty = tool.script_locate("Floaty");
@@ -88,6 +87,7 @@ var interface = tool.readJSON("interface", {
     "公告": false,
     "无障碍提醒": false,
     "运行次数": 0,
+    "server":"http://43.138.239.186/pgr_assistant/"
 });
 
 var notes = tool.readJSON("notes", {
@@ -112,25 +112,20 @@ if (helper.注射血清 == undefined) {
     throw Error("初始化配置失败，已重置数据，请尝试重启应用")
 }
 
-if(!helper.纷争战区){
-    tool.writeJSON("纷争战区", {
-        "自动":false,
-        "周期": false,
-        "状态":false,
-        "战斗期": false
-    });
-    helper = tool.readJSON("helper");
+if(!interface.url){
+    tool.writeJSON("server", "http://43.138.239.186/pgr_assistant/","interface");
+    interface = tool.readJSON("interface");
 }
 
-/*
+
 threads.start(function () {
     try {
-        let linkurl = http.get(use.server + "about_link.json");
+        let linkurl = http.get(interface.server + "about_link.json");
         if (linkurl.statusCode == 200) {
-            jlink_mian = JSON.parse(linkurl.body.string())
-            tukuss = http.get(use.server + "Gallery_list.json");
-            if (tukuss.statusCode == 200) {
-                tukuss = JSON.parse(tukuss.body.string());
+            use.gather_link= JSON.parse(linkurl.body.string())
+            use.gallery_link = http.get(interface.server + "gallery_list.json");
+            if (use.gallery_link.statusCode == 200) {
+                use.gallery_link = JSON.parse(use.gallery_link.body.string());
             } else {
                 toast("图库列表请求失败!");
             }
@@ -143,7 +138,7 @@ threads.start(function () {
         } else {
             toast("云端配置请求失败，请检查网络：\n" + linkurl.statusMessage);
             console.error("云端配置请求失败，请检查网络：\n" + linkurl.statusMessage);
-            engines.stopAll();
+           // engines.stopAll();
         }
     } catch (err) {
         toast("无法连接服务器，请检查网络。错误类型:" + err);
@@ -151,11 +146,7 @@ threads.start(function () {
         engines.stopAll();
     };
 });
-*/
 
-var sto_mod = storages.create("modular");
-//sto_mod.clear()
-var mod_data = sto_mod.get("modular", []);
 
 var SystemUiVisibility = (ve) => {
     var option =
@@ -279,7 +270,7 @@ ui.layout(
                     </toolbar>
                     <ScrollView>
                         <vertical margin="20 0 20 50" >
-                            <widget-switch-se7en id="floatyCheckPermission" text="{{language['levitating_permissions']}}" checked="{{floaty.checkPermission() != false}}" padding="6 0 6 5" textSize="22"
+                            <widget-switch-se7en id="floatyCheckPermission" text="{{language['levitating_permissions']}}" checked="{{floaty.checkPermission() != false}}" visibility="{{floaty.checkPermission() ? 'gone' : 'visible'}}" padding="6 0 6 5" textSize="22"
                                 thumbSize="24"
                                 radius="24"
                                 textColor="{{use.theme.text}}"
@@ -298,12 +289,18 @@ ui.layout(
                                 padding="6 6 6 6"
                                 textSize="16" textColor="{{use.theme.text}}"
                             />
-                            <radiogroup id="depletion_way" orientation="horizontal" h="auto" visibility="gone">
+                            <radiogroup id="depletion_way" orientation="horizontal" h="auto" visibility="{{helper.血清 ? 'visible' : 'gone'}}">
                                 <radio id="depletion_way1" text="{{language['depletion_way1']}}" w="auto" textColor="{{use.theme.text}}" />
                                 <spinner id="resources_type" textSize="16" entries="{{language['resources_type']}}"
                                     layout_gravity="right|center" w="auto" h="{{dp2px(10)}}" visibility="gone" />
                                 <radio id="depletion_way2" text="{{language['depletion_way2']}}" w="auto" textColor="{{use.theme.text}}" />
                             </radiogroup>
+                            <horizontal id="depletion_manage" gravity="center" marginLeft="10" bg="{{use.theme.bg}}" visibility="{{helper.血清 ? 'visible' : 'gone'}}">
+                                    <text id="mr1" text="{{language['input_tips1']}}" textSize="15" textColor="{{use.theme.text}}" /> 
+                                  <input id="input_challenge" inputType="number" hint="{{helper.挑战次数}}次" layout_weight="1" w="auto"  textColorHint="{{use.theme.text3}}" />
+                                    <input id="input_serum" inputType="number" hint="{{helper.注射血清}}个" layout_weight="1" w="auto" textColorHint="{{use.theme.text3}}" />
+      
+                                </horizontal>
                             <widget-switch-se7en
                                 id="daily_serum"
                                 checked="{{helper.每日血清}}"
@@ -355,6 +352,7 @@ ui.layout(
                                 padding="6 6 6 6"
                                 textSize="16" textColor="{{use.theme.text}}"
                             />
+
 
                             <card
                                 w="*"
@@ -595,7 +593,6 @@ function initPop(modify) {
 
 
 
-
 ui.viewpager.setCurrentItem(1)
 
 let animation_viewpager = false;
@@ -739,11 +736,11 @@ var items = [{
 {
     text: "问题帮助",
     drawable: "@drawable/ic_help_black_48dp",
-},/*
+},
 {
     text: "捐赠打赏",
     drawable: "ic_favorite_black_48dp",
-},*/
+},
 {
     text: "关于应用",
     drawable: "ic_account_circle_black_48dp",
@@ -751,11 +748,7 @@ var items = [{
 {
     text: "运行日志",
     drawable: "ic_assignment_black_48dp",
-}/*,
-{
-    text: "模块仓库",
-    drawable: "@drawable/ic_archive_black_48dp"
-}*/
+}
 ];
 
 ui.drawerList.setDataSource(items);
@@ -817,8 +810,7 @@ ui.drawerList.on("item_click", (item) => {
             engines.execScript("donation", "require('./utlis/donation.js').donation('iVBORw0KGgoAAAANSUhEUgAA')")
             break
         case "关于应用":
-            toast("还没有相关内容")
-            new_ui("关于");
+          new_ui("关于");
             break;
         case "模块仓库":
             engines.execScriptFile('./utlis/Module_platform.js');
@@ -972,6 +964,7 @@ ui.emitter.on("resume", function () {
 ui.depletion_serum.on("click", function (view) {
     checked = view.checked;
     ui.depletion_way.setVisibility(checked ? 0 : 8);
+    ui.depletion_manage.setVisibility(checked ? 0:8)
     tool.writeJSON("血清", checked)
 })
 ui.depletion_way1.on("check", function (checked) {
@@ -1423,7 +1416,12 @@ function 开始运行jk(jk, tips_) {
 
 //当离开本界面时保存data
 ui.emitter.on("pause", () => {
-
+    if(ui.input_challenge.getText() != ''){
+        tool.writeJSON("挑战次数",ui.input_challenge.getText())
+       }
+   if(ui.input_serum.getText() != ''){
+    tool.writeJSON("注射血清",ui.input_serum.getText())
+   }
 
 });
 //返回事件
@@ -1469,47 +1467,6 @@ ui.emitter.on("activity_result", (requestCode, resultCode, data) => {
     filePathCallback = null;
 });
 
-
-function 输入框(id, text) {
-    let re = /\d+/;
-
-    arr = re.exec(text);
-    if (text.length == 0) {
-        id.setError("输入不能为空");
-        return null;
-    }
-
-    if (id == ui.inputd && arr[0] > 100) {
-        id.setError("核电池？");
-        return null;
-    } else if (arr[0] > 999) {
-        id.setError("不能大于999");
-        return null;
-    }
-    id.setText(null);
-    id.setError(null);
-
-    switch (id) {
-        case ui.inputxi:
-            tool.writeJSON("行动", arr[0]);
-            toast("行动上限次数成功设置为" + arr[0])
-            setting = tool.readJSON("configure");
-            ui.inputxi.setHint(helper.行动 + "次");
-            break;
-        case ui.inputjm:
-            tool.writeJSON("剿灭", arr[0]);
-            toast("剿灭上限次数成功设置为" + arr[0])
-            setting = tool.readJSON("configure");
-            ui.inputjm.setHint(helper.剿灭 + "次");
-            break;
-        case ui.inputiz:
-            tool.writeJSON("血清", arr[0]);
-            toast("血清兑换次数成功设置为" + arr[0])
-            setting = tool.readJSON("configure");
-            ui.inputiz.setHint(helper.血清 + "个");
-            break;
-    }
-}
 
 
 if (!files.exists("./library/coordinate.json")) {
@@ -1614,10 +1571,8 @@ function Update_UI(i) {
         case 1:
             ui.run(() => {
 
-                ui._bgtxt.setText("模块\n配置")
-
-                floaty.checkPermission() ? ui.floatyCheckPermission.setVisibility(8) : ui.floatyCheckPermission.setVisibility(0);
-
+             
+                
                 try {
                     if (tool.script_locate("Floaty.js")) {
                         ui.start.setText("停止运行")
@@ -1626,11 +1581,6 @@ function Update_UI(i) {
                     }
                 } catch (err) { }
 
-                if (mod_data[0] == undefined) {
-                    ui._bgT.attr("visibility", "gone")
-                } else {
-                    ui._bgT.attr("cardCornerRadius", "25dp");
-                }
 
                 //activity.setRequestedOrientation(1);
                 //更新模拟器，虚拟机按钮颜色
@@ -1639,10 +1589,7 @@ function Update_UI(i) {
                 ui.disputes.setRadius(25);
 
                 ui._bgA.attr("cardCornerRadius", "25dp");
-                if (helper.血清) {
-                    ui.depletion_serum.checked = true;
-                    ui.depletion_way.setVisibility(0);
-                };
+               
                 if (!helper.战斗.活动) {
                     ui.depletion_way1.checked = true;
                     ui.resources_type.setVisibility(0);
@@ -1758,7 +1705,7 @@ function new_ui(name, url) {
             use.theme.setTheme("night");
             break
         case '关于':
-            toastLog("还没有相关内容")
+            engines.execScriptFile("./activity/about.js");
             break;
         case '设置':
             engines.execScriptFile("./activity/Basics.js");

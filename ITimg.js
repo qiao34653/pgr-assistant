@@ -478,6 +478,7 @@ function 找图(picture, list) {
  * @returns {boolean|object} - 返回值取决于list.action
  */
 function ocr文字识别(words, list) {
+  
     list = {
         action: list.action,
         timing: list.timing || 0,

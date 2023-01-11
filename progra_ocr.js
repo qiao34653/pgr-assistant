@@ -262,9 +262,6 @@ function 进入主页() {
             if (getpackage() != helper.包名) {
                 启动();
             }
-            //关闭纷争战区弹窗
-            ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右下半屏" });
-
             ITimg.ocr("更新", { action: 0, timing: 10000, area: "右下半屏" });
             ITimg.ocr("确定", { action: 0, timing: 2000, area: "右下半屏" });
             click(height / 2, width - 80);
@@ -1003,27 +1000,6 @@ function 战斗() {
     }
     // ITimg.ocr("MAX", { action: 4, timing: 500, area: "下半屏", part: true })
     ITimg.ocr("确认出战", { action: 4, timing: 2000, part: true, });
-
-    if(ITimg.picture("注射血清-确定",{timing:100,area:"右下半屏"})){
-        if(helper.注射血清 > 0){
-            for(let i=0;i<helper.注射血清;i++){
-                ITimg.picture("注射血清-确定",{action:0,timing:1000,area:"右下半屏"})
-            if(ITimg.picture("获得奖励",{action:0,timing:1000,area:"上半屏"})){
-                helper.已注射血清++;
-                Floaty.emit("展示文本", "血清", "血清：可使用:"+helper.注射血清+"&已使用:"+helper.已注射血清);
-                if(helper.已注射血清>=helper.注射血清){
-                    tool.writeJSON("注射血清",0)
-                }
-            };
-            }
-            sleep(500)
-            ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右下半屏" });
-           // ITimg.picture("注射血清-取消",{action:0,timing:1000,area:"下半屏"})
-
-           ITimg.ocr("确认出战", { action: 4, timing: 2000, part: true, });
-    
-        }
-    }
     //   if(ITimg.ocr("确认出战", { action: 4, timing: 2000, refresh: false })
     if (helper.战斗.作战) {
         ITimg.ocr("作战开始", { action: 4, timing: 10000, area: "右下半屏" })

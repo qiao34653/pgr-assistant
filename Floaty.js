@@ -682,10 +682,10 @@ function 程序(implem) {
                             case "状态：暂停，未安装插件":
                                 break;
                             default:
-                                toastLog("PRTS辅助启动失败，请尝试重新启动");
+                                toastLog("战双辅助启动失败，请尝试重新启动");
                                 暂停();
                                 ui.run(function () {
-                                    window.tos.setText("状态：PRTS辅助启动失败");
+                                    window.tos.setText("状态：战双辅助启动失败");
                                 })
                                 return
                         }
@@ -719,7 +719,7 @@ threads.start(function () {
                 }
                 break
             case "关闭程序":
-                toastLog("停止悬浮窗及PRTS辅助中...")
+                toastLog("停止悬浮窗及战双辅助中...")
                 exit();
                 break
         }
