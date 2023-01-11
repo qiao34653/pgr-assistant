@@ -788,14 +788,13 @@ ui.drawerList.on("item_click", (item) => {
 
             break;
         case "加群交流":
-            use.群号 = "481747236"
 
             try {
                 $app.startActivity({
-                    data: "mqqapi://card/show_pslcard?card_type=group&uin=" + use.群号,
+                    data: "mqqapi://card/show_pslcard?card_type=group&uin=" + use.gather_link.群号,
                 })
             } catch (err) {
-                toastLog("请先安装QQ或升级QQ\n群号：" + use.群号)
+                toastLog("请先安装QQ或升级QQ\n群号：" + use.gather_link.群号)
             }
             return
         case "问题帮助":
@@ -807,7 +806,7 @@ ui.drawerList.on("item_click", (item) => {
             new_ui("日志");
             return
         case "捐赠打赏":
-            engines.execScript("donation", "require('./utlis/donation.js').donation('iVBORw0KGgoAAAANSUhEUgAA')")
+            engines.execScript("donation", "require('./utlis/applaud.js').donation('iVBORw0KGgoAAAANSUhEUgAA')")
             break
         case "关于应用":
           new_ui("关于");

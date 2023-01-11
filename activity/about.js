@@ -170,7 +170,7 @@ ui.update_log.on("click", () => threads.start(Historicalupdate));
 
 //
 ui.donation.on("click", () => {
-    var donationkey = require('./applaud')
+    var donationkey = require('../utlis/applaud.js')
     donationkey.donation("iVBORw0KGgoAAAANSUhEUgAA")
 });
 
