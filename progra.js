@@ -157,7 +157,7 @@ function 主程序() {
         战斗();
     }
     纷争战区();
-    便笺(1000);
+    便笺(3000);
 
     //
     领取任务奖励();
@@ -225,9 +225,8 @@ function 启动(package_) {
             sleep(3000)
             break
     }
-    if (helper.音量) {
-        tool.writeJSON("当前音量", gmvp);
-    }
+ tool.writeJSON("当前音量", gmvp);
+    
 
     threads.start(function () {
         if (helper.静音) {

@@ -1,4 +1,5 @@
 
+
 importClass(android.graphics.drawable.GradientDrawable);
 importClass(android.view.ViewGroup);
 var fun,
@@ -81,6 +82,55 @@ function removeByVal(arrylist, val, 操作) {
 }
 
 
+function startChooseFile(mime_Type) {
+    //感觉路径有点乱
+    log(files.exists("./utlis/file_chooser_dialog.js"))
+    let FileChooserDialog = require("./file_chooser_dialog");
+    
+    FileChooserDialog.build({
+        title: '请选择后缀为.zip的压缩文件',
+        type: 'app-or-overlay',
+        // 初始文件夹路径
+        dir: "/sdcard/",
+        // 可选择的类型，file为文件，dir为文件夹
+        canChoose: ["file"],
+        mimeType: mime_Type,
+        wrapInScrollView: true,
+        // 选择文件后的回调
+        fileCallback: (file) => {
+            console.info("选择的文件路径" + file);
+            if (file == null) {
+                toastLog("未选择路径");
+                return
+            }
+            if (file.indexOf(".zip") == -1) {
+                toast("不是zip压缩文件");
+                console.error("不是zip压缩文件");
+                return
+            }
+            files.removeDir("./library/gallery");
+
+            try {
+                if (copy(file, gallery)) {
+                    if (!gallery_message_file(true)) {
+                        Dialog_prompt("tips",language.inducts_gallery_no);
+                    } else {
+                        tukuui.dwh.setText("当前使用图库：" + gallery_message.name);
+                        toast("导入" + gallery_message.name + "图库成功")
+                    };
+                } else {
+                    toast("失败，解压缩异常，请参考现有的分辨率图库zip文件");
+                    console.error("失败，解压缩异常")
+                }
+            } catch (er) {
+                toast("失败，未知异常，请参考现有的分辨率图库zip文件" + er);
+                console.error("失败，未知异常，请参考现有的分辨率图库zip文件" + er)
+            }
+        }
+    }).show();
+
+}
+
 function Dialog_prompt(title_, content_) {
     dialogs.build({
         title: title_,
@@ -131,7 +181,7 @@ function gallery_view(gallery_link) {
                     
                     <vertical id="parent_" visibility="gone">
                         
-                        <text  text="显示X说明该功能所需的图片不全，点击展开详细图片内容。可查看缺少那些小图片。tips:小图片显示 √ 并不代表此小图片在你的设备上可用，因为分辨率不同可能导致小图片在截图上匹配失败" typeface="sans" textColor="#ff7f27" textSize="12sp"  margin="20 0" />
+                        <text id="inspection_tips"  text="{{language['inspection_tips']}}" typeface="sans" textColor="#ff7f27" textSize="12sp"  margin="20 0" />
                         
                         <ScrollView h="{{1000}}px" id="scrollView" >
                             
@@ -162,9 +212,9 @@ function gallery_view(gallery_link) {
                     </list>
                 </vertical>
                 <linear>
-                    <button id="tuku_jy" visibility="gone" h="auto" margin="0 -5 0 0" textSize="15"  layout_weight="1" text="检查图库" style="Widget.AppCompat.Button.Borderless.Colored"/>
+                    <button id="inspection_gallery"  h="auto" margin="0 -5 0 0" textSize="15"  layout_weight="1" text="{{language['inspection_gallery']}}" style="Widget.AppCompat.Button.Borderless.Colored"/>
                     
-                    <button id="tuku_choice" h="auto" margin="0 -5 0 0" textSize="15" layout_weight="1" text="导入自定义图库" style="Widget.AppCompat.Button.Borderless.Colored"/>
+                    <button id="inducts_gallery" h="auto" margin="0 -5 0 0" textSize="15" layout_weight="1" text="{{language['inducts_gallery']}}" style="Widget.AppCompat.Button.Borderless.Colored"/>
                 </linear>
             </vertical>
         </ScrollView>
@@ -322,9 +372,9 @@ function gallery_view(gallery_link) {
         }
         e.consumed = true;
     });
-    /*
-    tukuui.tuku_jy.on('click', function() {
-        if (fun == undefined) {
+    
+    tukuui.inspection_gallery.on('click', function() {
+        if (gallery_link == undefined) {
             return
         }
         progressDialog = dialogs.build({
@@ -348,10 +398,10 @@ function gallery_view(gallery_link) {
             tukuui.content.removeViewAt(i)
         }
         
-        let url = fun("检验")
+        let url = interface.server
         let 图库列表 = url;
         threads.start(function() {
-            url = http.get(url + "tulili/图库列表.json");
+            url = http.get(url + "gallery_list/图库列表.json");
             if (url.statusCode == 200) {
                 图库列表 = JSON.parse(url.body.string());
                 url = true;
@@ -373,8 +423,16 @@ function gallery_view(gallery_link) {
             if (图库列表 == null) {
                 return
             }
-
-
+            //获取本地图库信息
+            gallery_message = gallery_message_file(true)
+            if(gallery_message.识别方式.ocr==true){
+                图库列表=图库列表.ocr;
+            }else{
+                图库列表=图库列表.找图;
+            }
+            ui.run(()=>{
+                tukuui.inspection_tips.setText(language.inspection_tips+(gallery_message.识别方式.ocr==true ? language.identify_way_tips1 : language.identify_way_tips2));
+            })
             function jiance(tukuwj) {
                 var nofiles = []
                 for (var i = 0; i < tukuwj.length; i++) {
@@ -470,11 +528,14 @@ function gallery_view(gallery_link) {
             })
         })
     })
-*/
+
    
-    tukuui.tuku_choice.on("click", () => {
-        toast("导入的图库内图片名称需符合官方的，尽量不少一张图片！！！\n待用文件夹的除外")
-        startChooseFile(".zip", fun);
+    tukuui.inducts_gallery.on("click", () => {
+        toast("导入的图库内图片名称需符合官方的，尽量不少一张图片！！！\n待用文件夹的除外");
+        threads.start(function(){
+
+        startChooseFile(".zip");
+    })
     })
 
    
@@ -578,7 +639,7 @@ function 图库下载(link, name, item, fun) {
                 if (item != undefined) {
                     setTimeout(function() {
 
-                        if (更换图库(name, fun)) {
+                        if (更换图库(name)) {
                             item.state = "使用中";
                         } else {
                             item.state = "更换失败"
@@ -662,51 +723,7 @@ function 更换图库(name) {
 
 }
 
-function startChooseFile(mime_Type, fun) {
-    let FileChooserDialog = require("./prototype/file_chooser_dialog");
-    FileChooserDialog.build({
-        title: '请选择后缀为.zip的压缩文件',
-        type: 'app-or-overlay',
-        // 初始文件夹路径
-        dir: "/sdcard/",
-        // 可选择的类型，file为文件，dir为文件夹
-        canChoose: ["file"],
-        mimeType: mime_Type,
-        wrapInScrollView: true,
-        // 选择文件后的回调
-        fileCallback: (file) => {
-            console.info("选择的文件路径" + file);
-            if (file == null) {
-                toastLog("未选择路径");
-                return
-            }
-            if (file.indexOf(".zip") == -1) {
-                toast("不是zip压缩文件");
-                console.error("不是zip压缩文件");
-                return
-            }
-            files.removeDir("./library/gallery");
 
-            try {
-                if (copy(file, gallery)) {
-                    if (!gallery_message_file(true)) {
-                        toastLog("失败，缺少必要的gallery_message.json文件\n如确认gallery_message.json存在，请检查zip编码\n尽量使用手机上的文件管理器进行压缩");
-                    } else {
-                        tukuui.dwh.setText("当前使用图库：" + gallery_message.name);
-                        toast("导入" + gallery_message.name + "图库成功")
-                    };
-                } else {
-                    toast("失败，解压缩异常，请参考现有的分辨率图库zip文件");
-                    console.error("失败，解压缩异常")
-                }
-            } catch (er) {
-                toast("失败，未知异常，请参考现有的分辨率图库zip文件" + er);
-                console.error("失败，未知异常，请参考现有的分辨率图库zip文件" + er)
-            }
-        }
-    }).show();
-
-}
 var gallery_configure = {}
 gallery_configure.gallery_view = gallery_view;
 gallery_configure.选择图库 = 选择图库;

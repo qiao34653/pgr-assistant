@@ -61,8 +61,8 @@ var helper = tool.readJSON("helper", {
         "作战": false,
         "资源名称": "螺母作战"
     },
-    "纷争战区":{
-        "自动":false,
+    "纷争战区": {
+        "自动": false,
         "周期": false,
         "状态": false,
         "战斗期": false
@@ -77,7 +77,7 @@ var helper = tool.readJSON("helper", {
     "图片监测": true,
     "图片代理": true,
     "坐标兼容": false,
-    "自动授权截图":true,
+    "自动授权截图": true,
     "多分辨率兼容": false,
     "最低电量": 30
 });
@@ -87,7 +87,7 @@ var interface = tool.readJSON("interface", {
     "公告": false,
     "无障碍提醒": false,
     "运行次数": 0,
-    "server":"http://43.138.239.186/pgr_assistant/"
+    "server": "http://43.138.239.186/pgr_assistant/"
 });
 
 var notes = tool.readJSON("notes", {
@@ -112,8 +112,8 @@ if (helper.注射血清 == undefined) {
     throw Error("初始化配置失败，已重置数据，请尝试重启应用")
 }
 
-if(!interface.url){
-    tool.writeJSON("server", "http://43.138.239.186/pgr_assistant/","interface");
+if (!interface.url) {
+    tool.writeJSON("server", "http://43.138.239.186/pgr_assistant/", "interface");
     interface = tool.readJSON("interface");
 }
 
@@ -122,7 +122,7 @@ threads.start(function () {
     try {
         let linkurl = http.get(interface.server + "about_link.json");
         if (linkurl.statusCode == 200) {
-            use.gather_link= JSON.parse(linkurl.body.string())
+            use.gather_link = JSON.parse(linkurl.body.string())
             use.gallery_link = http.get(interface.server + "gallery_list.json");
             if (use.gallery_link.statusCode == 200) {
                 use.gallery_link = JSON.parse(use.gallery_link.body.string());
@@ -138,7 +138,7 @@ threads.start(function () {
         } else {
             toast("云端配置请求失败，请检查网络：\n" + linkurl.statusMessage);
             console.error("云端配置请求失败，请检查网络：\n" + linkurl.statusMessage);
-           // engines.stopAll();
+            // engines.stopAll();
         }
     } catch (err) {
         toast("无法连接服务器，请检查网络。错误类型:" + err);
@@ -296,11 +296,11 @@ ui.layout(
                                 <radio id="depletion_way2" text="{{language['depletion_way2']}}" w="auto" textColor="{{use.theme.text}}" />
                             </radiogroup>
                             <horizontal id="depletion_manage" gravity="center" marginLeft="10" bg="{{use.theme.bg}}" visibility="{{helper.血清 ? 'visible' : 'gone'}}">
-                                    <text id="mr1" text="{{language['input_tips1']}}" textSize="15" textColor="{{use.theme.text}}" /> 
-                                  <input id="input_challenge" inputType="number" hint="{{helper.挑战次数}}次" layout_weight="1" w="auto"  textColorHint="{{use.theme.text3}}" />
-                                    <input id="input_serum" inputType="number" hint="{{helper.注射血清}}个" layout_weight="1" w="auto" textColorHint="{{use.theme.text3}}" />
-      
-                                </horizontal>
+                                <text id="mr1" text="{{language['input_tips1']}}" textSize="15" textColor="{{use.theme.text}}" />
+                                <input id="input_challenge" inputType="number" hint="{{helper.挑战次数}}次" layout_weight="1" w="auto" textColorHint="{{use.theme.text3}}" />
+                                <input id="input_serum" inputType="number" hint="{{helper.注射血清}}个" layout_weight="1" w="auto" textColorHint="{{use.theme.text3}}" />
+
+                            </horizontal>
                             <widget-switch-se7en
                                 id="daily_serum"
                                 checked="{{helper.每日血清}}"
@@ -352,6 +352,29 @@ ui.layout(
                                 padding="6 6 6 6"
                                 textSize="16" textColor="{{use.theme.text}}"
                             />
+                            <card w="*" id="timed_tasks_frame" visibility="visible" margin="0 0 0 1" h="40" cardCornerRadius="1"
+                                cardElevation="0dp" gravity="center_vertical" cardBackgroundColor="#00000000" >
+                                <linear clipChildren="false" elevation="0" gravity="center_vertical" margin="8 0 8 0" bg="#00000000">
+                                    <img id="timed_tasks_img" src="@drawable/ic_alarm_black_48dp" layout_gravity="top|center_vertical" w="25dp" h="*" tint="{{use.theme.text}}" />
+                                    <text id="timed_tasks" margin="10 0 0 0" gravity="center" textSize="16" text="{{language['timed_tasks']}}" textColor="{{use.theme.text}}" />
+                                    <text layout_weight="1" />
+                                    <img id="timed_tasks_img2" src="@drawable/ic_keyboard_arrow_down_black_48dp" layout_gravity="right|center_vertical" w="25dp" h="*" tint="{{use.theme.text}}" />
+                                </linear>
+                            </card>
+                            <list id="timed_tasks_list" visibility="gone" bg="#00000000" >
+                                <card w="*" h="40" margin="5 0 5 0" cardCornerRadius="2dp"
+                                    cardElevation="0dp" foreground="?selectableItemBackground">
+                                    <horizontal gravity="center_horizontal" bg="{{use.theme.bg}}">
+                                        <vertical padding="5 0" h="auto" w="0" layout_weight="1">
+                                            <text text="{{this.app}}" textSize="16" maxLines="1" textColor="{{use.theme.text}}" />
+                                            <text text="{{this.shijian}}" textSize="14" maxLines="1" textColor="{{use.theme.text3}}" />
+                                        </vertical>
+                                        <img id="done" src="@drawable/ic_close_black_48dp" layout_gravity="right|center" tint="{{use.theme.text}}" w="30" h="*" margin="0 0 5 0" />
+                                    </horizontal>
+                                    <View bg="#dcdcdc" h="1" w="auto" layout_gravity="bottom" />
+                                </card>
+                            </list>
+                            <button id="timed_tasks_add" text="{{language['timed_tasks_add']}}" margin="0 -5" visibility="gone" layout_weight="1" textSize="16" style="Widget.AppCompat.Button.Borderless.Colored" />
 
 
                             <card
@@ -809,7 +832,7 @@ ui.drawerList.on("item_click", (item) => {
             engines.execScript("donation", "require('./utlis/applaud.js').donation('iVBORw0KGgoAAAANSUhEUgAA')")
             break
         case "关于应用":
-          new_ui("关于");
+            new_ui("关于");
             break;
         case "模块仓库":
             engines.execScriptFile('./utlis/Module_platform.js');
@@ -963,7 +986,7 @@ ui.emitter.on("resume", function () {
 ui.depletion_serum.on("click", function (view) {
     checked = view.checked;
     ui.depletion_way.setVisibility(checked ? 0 : 8);
-    ui.depletion_manage.setVisibility(checked ? 0:8)
+    ui.depletion_manage.setVisibility(checked ? 0 : 8)
     tool.writeJSON("血清", checked)
 })
 ui.depletion_way1.on("check", function (checked) {
@@ -1013,13 +1036,13 @@ ui.daily_serum.on("click", function (view) {
     tool.writeJSON("每日血清", checked)
 });
 
-ui.disputes.on("click",function(view){
+ui.disputes.on("click", function (view) {
     checked = view.checked;
-    if(checked){
+    if (checked) {
         use.Dialog_Tips(language.warm_tips, language.disputes_tips);
     }
     tool.writeJSON("纷争战区", {
-        "自动":checked,
+        "自动": checked,
         "周期": helper.纷争战区.周期,
         "状态": helper.纷争战区.状态,
         "战斗期": helper.纷争战区.战斗期
@@ -1050,6 +1073,51 @@ ui.handbook.on("click", function (view) {
     tool.writeJSON("手册经验", checked)
 });
 
+
+var timed_tasks_list = tool.readJSON("timed_tasks", []);
+
+ui.timed_tasks_list.setDataSource(timed_tasks_list);
+
+ui.timed_tasks_list.on("item_click", function (itemView, i) {
+    let delete_timing = dialogs.build({
+        type: "app",
+        title: itemView.app + language.delete_timed_tasks,
+        positive: language.yes,
+        negative: language.no
+    }).on("positive", () => {
+        log(language.delete_timed_tasks_tips + itemView.id, timers.removeTimedTask(itemView.id));
+        timed_tasks_list.splice(i, 1);
+     
+    })
+    tool.setBackgroundRoundRounded(delete_timing.getWindow(), { bg: use.theme.bg })
+    delete_timing.show();
+
+});
+
+ui.timed_tasks_frame.on("click", function () {
+    if (ui.timed_tasks_add.getVisibility() == 8) {
+        ui.timed_tasks_add.attr("visibility", "visible");
+        ui.timed_tasks_list.attr("visibility", "visible");
+        ui.timed_tasks_img.attr("tint", "#40a5f3");
+        ui.timed_tasks_img2.attr("tint", "#40a5f3");
+        ui.timed_tasks.setTextColor(colors.parseColor("#40a5f3"));
+        ui.timed_tasks_img2.attr("src", "@drawable/ic_keyboard_arrow_up_black_48dp")
+    } else {
+        ui.timed_tasks_add.attr("visibility", "gone");
+        ui.timed_tasks_list.attr("visibility", "gone");
+        ui.timed_tasks_img.attr("tint", use.theme.text);
+        ui.timed_tasks_img2.attr("tint", use.theme.text);
+        ui.timed_tasks.setTextColor(colors.parseColor(use.theme.text));
+        ui.timed_tasks_img2.attr("src", "@drawable/ic_keyboard_arrow_down_black_48dp")
+    }
+})
+
+//定时任务添加事件
+ui.timed_tasks_add.on("click", function () {
+    var task = require("./utlis/task.js");
+    task.create_task(timed_tasks_list)
+
+}) 
 /*
 var MaterialListC = JSON.parse(
     files.read("./utlis/materialName.json", (encoding = "utf-8"))
@@ -1146,33 +1214,18 @@ ui._bg.on("click", function () {
             wrapInScrollView: false,
             autoDismiss: true
         });
-        var package = [{
-            package_name: "com.kurogame.haru.hero",
-            name: "官服"
-        }, {
-            name: "B服",
-            package_name: "com.kurogame.haru.bilibili"
-        }, {
-            name: "华为服",
-            package_name: "com.kurogame.haru.huawei"
-        }, {
-            name: "oppo服",
-            package_name: "com.kurogame.haru.nearme.gamecenter"
-        }, {
-            name: "小米服",
-            package_name: "com.kurogame.haru.mi"
-        }]
-        for (let i = package.length - 1; i > 0; i--) {
-            if (app.getAppName(package[i].package_name.toString()) == null) {
-                package.splice(i, 1);
+     
+        for (let i = language.server_name.length - 1; i > 0; i--) {
+            if (app.getAppName(language.server_name[i].package_name.toString()) == null) {
+                language.server_name.splice(i, 1);
             }
         }
-        if (package.length <= 1) {
-            log(package[0].package_name)
+        if (language.server_name.length <= 1) {
+            log(language.server_name[0].package_name)
             tool.writeJSON("包名", package[0].package_name);
             开始运行jk();
         } else {
-            appnameui.fg_.setDataSource(package);
+            appnameui.fg_.setDataSource(language.server_name);
 
             appnameui.fg_.on("item_bind", function (itemView, itemHolder) {
                 itemView.fg.on("click", function () {
@@ -1415,13 +1468,13 @@ function 开始运行jk(jk, tips_) {
 
 //当离开本界面时保存data
 ui.emitter.on("pause", () => {
-    if(ui.input_challenge.getText() != ''){
-        tool.writeJSON("挑战次数",ui.input_challenge.getText())
-       }
-   if(ui.input_serum.getText() != ''){
-    tool.writeJSON("注射血清",ui.input_serum.getText())
-   }
-
+    if (ui.input_challenge.getText() != '') {
+        tool.writeJSON("挑战次数", ui.input_challenge.getText())
+    }
+    if (ui.input_serum.getText() != '') {
+        tool.writeJSON("注射血清", ui.input_serum.getText())
+    }
+    tool.writeJSON(null, timed_tasks_list,"timed_tasks");
 });
 //返回事件
 var isCanFinish = false;
@@ -1554,6 +1607,11 @@ threads.start(function () {
         }
     }
 
+    ui.run(() => {
+        if (tool.autoService(true)) {
+            ui.autoService.checked = true;
+        }
+    })
     sleep(50);
 
     if (interface.运行次数 != true && interface.公告 == true) threads.start(tishi);
@@ -1570,8 +1628,8 @@ function Update_UI(i) {
         case 1:
             ui.run(() => {
 
-             
-                
+
+
                 try {
                     if (tool.script_locate("Floaty.js")) {
                         ui.start.setText("停止运行")
@@ -1588,7 +1646,7 @@ function Update_UI(i) {
                 ui.disputes.setRadius(25);
 
                 ui._bgA.attr("cardCornerRadius", "25dp");
-               
+
                 if (!helper.战斗.活动) {
                     ui.depletion_way1.checked = true;
                     ui.resources_type.setVisibility(0);

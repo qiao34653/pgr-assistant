@@ -19,11 +19,71 @@
         "disputes_tips":"自动作战:\n第3区域会调用人工智障进行战斗\n不过还是建议在队伍预设,编队1放一个没养过的构造体送死,也可通关",
         "accessibility_permissions":"无障碍服务",
         "levitating_permissions":"悬浮窗权限",
-        "levitating_permissions_tips":"请先授予战双助手悬浮窗权限！"
+        "timed_tasks":"定时任务",
+        "timed_tasks_add":"添加",
+        "delete_timed_tasks":"\n确定要删除此定时任务吗？",
+        "yes":"确定",
+        "no":"取消",
+        "delete_timed_tasks_tips":"删除定时任务，id=: ",
+        "server_name":[{
+            "package_name": "com.kurogame.haru.hero",
+            "name": "官服"
+        }, {
+            "name": "B服",
+            "package_name": "com.kurogame.haru.bilibili"
+        }, {
+            "name": "华为服",
+            "package_name": "com.kurogame.haru.huawei"
+        }, {
+            "name": "oppo服",
+            "package_name": "com.kurogame.haru.nearme.gamecenter"
+        }, {
+            "name": "小米服",
+            "package_name": "com.kurogame.haru.mi"
+        }],
+        "timed_tasks_help":"使用帮助",
+        "task_tips":" 1. 保持后台运行\n由于各系统的限制，定时任务不能一定保证准时运行，可能会延迟1~5分钟。请尽量将应用加入各种白名单和允许自启动权限，后台任务上锁，让应用持续在后台运行。\n 2. 自动解锁手机\n如需自动解锁屏幕，请打开自动解锁-录制解锁动作-保存并导入模块\n 3. 定时任务不运行？\n请检查相关权限，你也可以通过运行日志-开发人员代码测试-DIY属于自己的循环定时任务",
+        
+        "channel_text":"渠道服",
+        "run_configure_text":"运行配置",
+        "elapsed_time_text":"运行时间",
+        "elapsed_time":[
+            "仅运行一次",
+            "按星期运行",
+            "按每天运行"
+        ],
+        "elapsed_time_abbreviation":["单次","每周","每天"],
+        "week":["周日","周一","周二","周三","周四","周五","周六"],
+        "senior_function_text":"高级功能",
+        "auto_unlock":"自动解锁屏幕",
+        "mute_run":"此次任务静音运行",
+        "run_configure_serum":"血清上限:",
+        "run_configure_challenge":"挑战次数:",
+        "serum":"血清",
+        "challenge":" 挑战",
+        "task_tips2":"请先选择时间",
+        "task_tips3":"请先选择星期",
+        "task_tips4":"已保存密码",
+        "password_management":"密码解锁管理",
+        "record_unlock_action":"录制解锁动作",
+        "password_input_tips":"请输入模块路径 或",
+        "task_add_tips":"成功创建定时任务，id=",
+        "task_add_tips2":"时间:",
+        "task_add_tips3":"日期:",
+        
+        "levitating_permissions_tips":"请先授予战双助手悬浮窗权限！",
+        
+        "inducts_gallery":"导入图库",
+        "inducts_gallery_no":"失败，缺少必要的gallery_message.json文件\n如确认gallery_message.json存在，请确认压缩包打开后是否有多余的文件夹, 或请检查zip编码, 尽量使用手机上的文件管理器进行压缩",
+        "inspection_gallery":"检查图库",
+        "inspection_tips":"显示X说明该功能所需的图片不全，点击展开详细图片内容。可查看缺少那些小图片。tips:小图片显示 √ 并不代表此小图片在你的设备上可用，因为分辨率不同可能导致小图片在截图上匹配失败",
+        "identify_way_tips1":"\n该图库为ocr+找图混合识别方式,小图可能较少,对设备性能要求较高",
+        "identify_way_tips2":"\n该图库为单找图识别方式,小图较多,适合低性能设备,非中文外服"
+
     },
     "basics":{
         "volume_suspended":"音量按键暂停辅助",
-        "volume_suspended_description":"按下相关音量键暂停PRTS辅助\n相关音量键在PRTS辅助运行时不能调节音量",
+        "volume_suspended_description":"按下相关音量键暂停战双辅助\n相关音量键在战双辅助运行时不能调节音量",
         "volume_suspended_under":"音量下键",
         "volume_suspended_above":"音量上键",
         "auto_empower_screenshots":"自动授权辅助截图权限",
@@ -62,7 +122,10 @@
     "about":{
          "name":"战双助手",
          "apply_version":"应用版本:",
-         "engine_version":"引擎版本:",
+         "engine_version":"引擎版本:Auto.js ",
+         "author":"作者:梦月时歌",
+         "open_source":"开源:",
+         "qq_tips":"请先安装QQ或升级QQ",
          "classify_text1":"联系作者",
          "classify_text2":"应用相关",
          "donation":"捐赠打赏",

@@ -6,14 +6,14 @@ ui.layout(
     <vertical>
         <canvas layout_weight="1" id="canvas" />
         <frame>
-            <HorizontalScrollView  w="*"h="50" bg="#dddddd">
+            <HorizontalScrollView w="*" h="50" bg="#dddddd">
                 <horizontal h="auto">
-                    <button id="openImage" text="打开图片"/>
-                    
-                    <button id="but_q" layout_weight="1" h="auto" text="清空动作"/>
-                    <button id="but_c" layout_weight="1" h="auto" text="撤销动作"/>
-                    <button id="but_s" layout_weight="1" h="auto" text="启动测试"/>
-                    <button id="but_b" layout_weight="1" h="auto" text="保存并导入模块"/>
+                    <button id="openImage" text="打开图片" />
+
+                    <button id="but_q" layout_weight="1" h="auto" text="清空动作" />
+                    <button id="but_c" layout_weight="1" h="auto" text="撤销动作" />
+                    <button id="but_s" layout_weight="1" h="auto" text="启动测试" />
+                    <button id="but_b" layout_weight="1" h="auto" text="保存并导入模块" />
                 </horizontal>
             </HorizontalScrollView>
         </frame>
@@ -60,7 +60,7 @@ var TouchPointCurrent = new Array; //[[x1,y1],[x2,y2],[x3,y3],[x4,y4],………]
 var vrx = 0,
     vry = 0; //屏幕坐标差。
 
-threads.start(function() {
+threads.start(function () {
     //console.show();
 });
 
@@ -91,19 +91,19 @@ setInterval(() => {
     };
 }, Ts);
 
-ui.but_q.click(function() {
+ui.but_q.click(function () {
     MainGesturesAry = new Array;
 });
-ui.but_c.click(function() {
+ui.but_c.click(function () {
     MainGesturesAry.pop();
 });
-ui.but_s.click(function() {
+ui.but_s.click(function () {
     测试()
 });
 
 
-ui.but_b.click(function() {
-    threads.start(function() {
+ui.but_b.click(function () {
+    threads.start(function () {
         if (MainGesturesAry.length == 0) {
             toastLog("请先录制解锁动作")
             return
@@ -144,7 +144,7 @@ ui.but_b.click(function() {
                 "exports.preface = preface;\n" +
                 "exports.implement = implement;\n"
             files.write(p, js);
-            var sto_ = storages.create("time");
+            var sto_ = storages.create("warbler");
             var password = sto_.put("password", p);
             toastLog("已生成模块文件并导入")
         };
@@ -153,11 +153,11 @@ ui.but_b.click(function() {
 
 });
 
-ui.openImage.click(function() {
-    threads.start(function() {
+ui.openImage.click(function () {
+    threads.start(function () {
         switch (dialogs.singleChoice("选择方式", ["媒体库", "本机文件"])) {
             case 0:
-                媒体库选择(function(path) {
+                媒体库选择(function (path) {
                     var img = MainImg;
                     MainImg = 加载图片(path);
                     if (MainImg) {
@@ -170,7 +170,7 @@ ui.openImage.click(function() {
                 });
                 break;
             case 1:
-                选择图片(function(path) {
+                选择图片(function (path) {
                     var img = MainImg;
                     MainImg = 加载图片(path);
                     if (MainImg) {
@@ -316,7 +316,7 @@ ui.canvas.on("draw", (canvas) => {
                 canvas.drawCircle(X, Y, 10, paint);
                 canvas.drawCircle(x, y, 10, paint);
                 //canvas.drawCircle(a, b, 10, paint);
-            } catch (e) {};
+            } catch (e) { };
         };
         for (let ii = 0; ii < TouchPointRecord.length; ii++) {
             let ge = TouchPointRecord[ii];
@@ -444,11 +444,11 @@ ui.canvas.setOnTouchListener(new android.view.View.OnTouchListener((view, event)
 }));
 
 
-反色 = function(color) {
+反色 = function (color) {
     return (-1 - colors.argb(0, colors.red(color), colors.green(color), colors.blue(color)));
 };
 
-toJavaArray = function(type, ary) {
+toJavaArray = function (type, ary) {
     //var Ary = java.lang.reflect.Array.newInstance(		java.lang.Float.TYPE, 4);
     var Ary = util.java.array(type, ary.length);
     for (let i in ary) {
@@ -457,7 +457,7 @@ toJavaArray = function(type, ary) {
     return Ary;
 };
 
-SolvePos = function(a, b, r, k, c) {
+SolvePos = function (a, b, r, k, c) {
     let a1 = k * k + 1;
     let b1 = 2 * k * (c - b) - 2 * a;
     let c1 = a * a + (c - b) * (c - b) - r * r;
@@ -480,7 +480,7 @@ SolvePos = function(a, b, r, k, c) {
     return result;
 };
 
-weiyi = function(ary) {
+weiyi = function (ary) {
     var sum = 0;
     for (var i = 0; i < ary.length; i++) {
         sum += Math.pow(ary[i], 2);
@@ -488,7 +488,7 @@ weiyi = function(ary) {
     return Math.sqrt(sum);
 };
 
-kdfx = function(Y) {
+kdfx = function (Y) {
     var x = Math.cos(Y % 360 / 360 * 2 * Math.PI);
     var y = Math.sin(Y % 360 / 360 * 2 * Math.PI);
     return {
@@ -497,7 +497,7 @@ kdfx = function(Y) {
     };
 };
 
-ydfx = function(obj) {
+ydfx = function (obj) {
     var ary = getsd(1, [obj.x, obj.y]);
     var x = ary[0],
         y = ary[1];
@@ -508,7 +508,7 @@ ydfx = function(obj) {
     return Y;
 };
 
-getsd = function(s, ary) {
+getsd = function (s, ary) {
     var sum = weiyi(ary);
     var S = s / sum;
     for (var i = 0; i < ary.length; i++) {
@@ -517,7 +517,7 @@ getsd = function(s, ary) {
     return ary;
 };
 
-XYTOAB = function(x, y, x1, y1) {
+XYTOAB = function (x, y, x1, y1) {
     var A = (y1 - y) / (x1 - x);
     var B = y - A * x;
     return [A, B];
@@ -526,7 +526,7 @@ XYTOAB = function(x, y, x1, y1) {
 
 var imagesPath = new Array;
 
-thread = threads.start(function() {
+thread = threads.start(function () {
     sleep(1000);
     getPhotosInfo(25, imagesPath);
 });
@@ -549,7 +549,7 @@ function XYToMatrix(matrix, maxPoints) {
     this.matrix = new android.graphics.Matrix(this.originalMatrix);
     this.invertMatrix = new android.graphics.Matrix;
     this.matrix.invert(this.invertMatrix);
-    this.getScaling = function(ary) {
+    this.getScaling = function (ary) {
         //获取缩放比例。
         ary = Array.isArray(ary) ? ary : [0, 0, 100, 100];
         try {
@@ -560,7 +560,7 @@ function XYToMatrix(matrix, maxPoints) {
         };
     };
     this.maxPoints = maxPoints || 2;
-    this.maxPointsListener = function() {
+    this.maxPointsListener = function () {
         this.matrix = new android.graphics.Matrix(this.originalMatrix);
         //this.invertMatrix = new android.graphics.Matrix;
         this.matrix.invert(this.invertMatrix);
@@ -699,13 +699,13 @@ function XYToMatrix(matrix, maxPoints) {
 
     };
 
-    this.matrixPoints = function(matrix, ary) {
+    this.matrixPoints = function (matrix, ary) {
         //通过矩阵运算坐标数组。但是需要转换为浮点数组。
         var ary = this.toJavaArray("float", ary);
         matrix.mapPoints(ary);
         return this.toJsArray(ary);
     };
-    this.toJavaArray = function(type, ary) {
+    this.toJavaArray = function (type, ary) {
         //var Ary = java.lang.reflect.Array.newInstance(		java.lang.Float.TYPE, 4);
         var Ary = util.java.array(type, ary.length);
         for (let i in ary) {
@@ -713,7 +713,7 @@ function XYToMatrix(matrix, maxPoints) {
         };
         return Ary;
     };
-    this.toJsArray = function(ary) {
+    this.toJsArray = function (ary) {
         var Ary = new Array(ary.length);
         for (let i in ary) {
             Ary[i] = ary[i];
@@ -728,14 +728,14 @@ function XYToMatrix(matrix, maxPoints) {
         };
         return ary;
     };
-    this.weiyi = function(ary) {
+    this.weiyi = function (ary) {
         var sum = 0;
         for (var i = 0; i < ary.length; i++) {
             sum += Math.pow(ary[i], 2);
         };
         return Math.sqrt(sum);
     };
-    this.kdfx = function(Y) {
+    this.kdfx = function (Y) {
         var x = Math.cos(Y % 360 / 360 * 2 * Math.PI);
         var y = Math.sin(Y % 360 / 360 * 2 * Math.PI);
         return [x, y];
@@ -762,7 +762,7 @@ function 加载图片(A) {
     };
     return null;
     var dir = "/storage/emulated/0/DCIM";
-    var jsFiles = files.listDir(dir, function(name) {
+    var jsFiles = files.listDir(dir, function (name) {
         return (name.endsWith(".jpg") || name.endsWith(".png")) && files.isFile(files.join(dir, name));
     });
     if (jsFiles.length) {
@@ -777,7 +777,7 @@ function 加载图片(A) {
 
 
 function 选择图片(fun) {
-   let intent = new Intent(Intent.ACTION_PICK, null);
+    let intent = new Intent(Intent.ACTION_PICK, null);
     intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
     activity.startActivityForResult(intent, 2);
 
@@ -785,23 +785,23 @@ function 选择图片(fun) {
 
 
 function 媒体库选择(fun) {
-    ui.run(function() {
+    ui.run(function () {
         var ctx = activity;
         var window = new android.widget.PopupWindow();
         var view = XmlToView(
             <vertical padding="5">
-                        <text text="选择图片" textSize="25sp" gravity="center"/>
-                        <list id="list" w="*">
-                            <vertical w="*" margin="5" bg={colors.toString(colors.GRAY)} gravity="center">
-                                <img w="auto" h="auto" margin="6" src="file://{{filePath}}"/>
-                                <text w="*" h="25" margin="2" text="{{title}}" textSize="20sp" line="1"  margin="5" gravity="center"/>
-                            </vertical>
-                        </list>
+                <text text="选择图片" textSize="25sp" gravity="center" />
+                <list id="list" w="*">
+                    <vertical w="*" margin="5" bg={colors.toString(colors.GRAY)} gravity="center">
+                        <img w="auto" h="auto" margin="6" src="file://{{filePath}}" />
+                        <text w="*" h="25" text="{{title}}" textSize="20sp" line="1" margin="5" gravity="center" />
                     </vertical>
+                </list>
+            </vertical>
         );
         view.list.setDataSource(imagesPath);
 
-        view.list.on("item_click", function(item) {
+        view.list.on("item_click", function (item) {
             fun(item.filePath);
             window.dismiss();
         });
@@ -864,24 +864,24 @@ function 测试() {
         return
     }
     toastLog("开始测试")
-    let thread = threads.start(function() {
-        let unlocker = require('./lib/Unlock.js').unlocker
-
-        while (!unlocker.is_locked()) {
+    let thread = threads.start(function () {
+        const _km = context.getSystemService(context.KEYGUARD_SERVICE)
+        //是否锁屏
+        while (!_km.inKeyguardRestrictedInputMode()) {
             let lock = threads.lock()
             let complete = lock.newCondition()
             let awaitDialog = dialogs.build({
-                    cancelable: false,
-                    negative: '取消',
-                    positive: '确定',
-                    title: '请手动锁屏',
-                    content: '请手动锁定屏幕，脚本将在点击确定5秒后开始执行测试'
-                })
+                cancelable: false,
+                negative: '取消',
+                positive: '确定',
+                title: '请手动锁屏',
+                content: '请手动锁定屏幕，脚本将在点击确定5秒后开始执行测试'
+            })
                 .on('negative', () => {
                     lock.lock()
                     complete.signal()
                     lock.unlock()
-                    
+
                     awaitDialog.dismiss()
                     if (thread.isAlive()) {
                         thread.interrupt()
@@ -891,7 +891,7 @@ function 测试() {
                     lock.lock()
                     complete.signal()
                     lock.unlock()
-                    
+
                     awaitDialog.setActionButton("positive", null);
                     awaitDialog.setCancelable(false);
                     awaitDialog.show()
@@ -904,18 +904,20 @@ function 测试() {
                 awaitDialog.setContent('倒计时' + limit-- + '秒')
                 sleep(1000)
                 if (limit == 0) {
+                    toastLog("尝试唤醒屏幕");
+                    wakeup();
+                    sleep(1000)
+                    if (!device.isScreenOn()) {
+                        wakeup()
+                        device.wakeUpIfNeeded();
+                    }
                     awaitDialog.dismiss()
                 }
             }
         }
 
-        toastLog("尝试唤醒屏幕");
-        unlocker.wakeup()
-        sleep(1000)
-        if (!device.isScreenOn()) {
-            unlocker.wakeup()
-            device.wakeUpIfNeeded();
-        }
+
+
         toastLog("上滑，划开图层");
         //自定义一个适用于大部分手机划开图层的手势操作
 
@@ -935,6 +937,37 @@ function 测试() {
         }
         sleep(1500)
         toastLog("测试结束")
+
+        // 唤醒设备
+        function wakeup() {
+            log("唤醒设备")
+            let limit = 3
+            while (!device.isScreenOn() && limit-- > 0) {
+                device.wakeUp();
+
+                sleep(200);
+                if (!device.isScreenOn()) {
+                    shell("input keyevent 224")
+                    sleep(500);
+                }
+                if (!device.isScreenOn()) {
+                    try {
+                        $shell.setDefaultOptions({
+                            adb: true
+                        });
+                        shell("input keyevent 224")
+                    } catch (err) {
+                        toast("使用Shizuku唤醒屏幕失败，请检查是否已授权" + err)
+                        console.error("使用Shizuku唤醒屏幕失败，请检查是否已授权" + err)
+                        device.wakeUpIfNeeded()
+                    }
+                }
+                sleep(1000)
+            }
+            if (!device.isScreenOn()) {
+                console.warn('isScreenOn判定失效，无法确认是否已亮屏。直接尝试后续解锁操作')
+            }
+        }
 
     })
 }
