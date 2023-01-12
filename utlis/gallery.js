@@ -2,9 +2,8 @@
 
 importClass(android.graphics.drawable.GradientDrawable);
 importClass(android.view.ViewGroup);
-var fun,
-    tukuui,
-    tukuds,
+var tukuui,
+    gallery_link,
     progressDialog,
     width = device.width,
     height = device.height;
@@ -70,6 +69,7 @@ function removeByVal(arrylist, val, 操作) {
             }
             break;
         case "修改":
+            log(arrylist)
             for (var i = 0; i < arrylist.length; i++) {
                 if (arrylist[i].state == val) {
                     arrylist[i].state = "使用";
@@ -143,9 +143,9 @@ function Dialog_prompt(title_, content_) {
 
 }
 
-function gallery_view(gallery_link) {
+function gallery_view(gallery_link_) {
     try {
-        if (gallery_link[0] == undefined) {
+        if (gallery_link_[0] == undefined) {
             let err = "无法拉取云端图库,请确认已是最新版本";
             toast(err)
             console.error(err)
@@ -157,6 +157,7 @@ function gallery_view(gallery_link) {
         console.error(err)
         return
     }
+    gallery_link=gallery_link_
     tukuui = ui.inflate(
         <vertical >
             <vertical w="*" h="*">
@@ -334,7 +335,7 @@ function gallery_view(gallery_link) {
                     } else if (itemView.tutext.text() == "下载") {
                         //  current = gallery_link[j].链接;
                         if (!progressDialog) {
-                            图库下载(gallery_link[j].链接, gallery_link[j].name, item, fun);
+                            图库下载(gallery_link[j].链接, gallery_link[j].name, item);
                             progressDialog = dialogs.build({
                                 type: "app",
                                 progress: {
@@ -610,7 +611,9 @@ function 选择图库(gallery_link, fun) {
     }
 }
 
-function 图库下载(link, name, item, fun) {
+function 图库下载(link, name, item) {
+    //模块报错要在新线程下才会提示,否则无反应
+   // threads.start(function(){
     datali = {}
     datali.link = link;
     datali.id = "图库";
@@ -619,7 +622,7 @@ function 图库下载(link, name, item, fun) {
     datali.fileName = name + ".zip";
     dwadlink.put("data", datali);
     files.createWithDirs("./library/gallery_list/")
-    engines.execScriptFile("./lib/download.js");
+    engines.execScriptFile("./utlis/download.js");
     //监听脚本间广播'download'事件
     if (item != undefined) {
         item.color = "#00bfff";
@@ -635,7 +638,7 @@ function 图库下载(link, name, item, fun) {
             if (X.data == "下载完成") {
                 let event_ = events.broadcast.listeners("download" + datali.id)[0];
                 events.broadcast.removeListener("download" + datali.id, event_);
-                removeByVal(gallery_link, "使用中", "修改");
+               removeByVal(gallery_link, "使用中", "修改");
                 if (item != undefined) {
                     setTimeout(function() {
 
@@ -701,6 +704,7 @@ function 图库下载(link, name, item, fun) {
         }
 
     });
+//})
 }
 
 function 更换图库(name) {

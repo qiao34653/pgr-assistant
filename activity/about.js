@@ -40,7 +40,7 @@ ui.layout(
                                         text="{{language['name']}}" gravity="center" />
                                     <text id="apply_version" text="{{language['apply_version']}}v1.0.6" margin="0" gravity="center" >
                                     </text>
-                                    <text id="engine_version" text="{{language['engine_version']+app.autojs.versionName+(app.autojs.versionCode > 8082200 ? '(64位)':'(32位)')}}" margin="0" gravity="center" >
+                                    <text id="engine_version" text="{{language['engine_version']+app.versionName+(app.autojs.versionCode > 8082200 ? '(64位)':'(32位)')}}" margin="0" gravity="center" >
                                     </text>
 
                                 </vertical>
@@ -69,17 +69,17 @@ ui.layout(
 
 
                                     <horizontal id="donation" gravity="center_vertical" foreground="?android:attr/selectableItemBackgroundBorderless">
-                                        <text textSize="15" text="{{language['donation']}}" textColor="#080808" margin="25 0 0 0" gravity="center_vertical" />
+                                        <text textSize="15" text="{{language['donation']}}" textColor="#080808" margin="25 10" gravity="center_vertical" />
                                         <text layout_weight="1" />
                                     </horizontal>
 
                                     <horizontal id="update_log" gravity="center_vertical" foreground="?android:attr/selectableItemBackgroundBorderless">
-                                        <text textSize="15" text="{{language['update_log']}}" textColor="#080808" margin="25 0 0 0" gravity="center_vertical" />
+                                        <text textSize="15" text="{{language['update_log']}}" textColor="#080808" margin="25 10" gravity="center_vertical" />
                                         <text layout_weight="1" />
                                     </horizontal>
 
                                     <horizontal id="examine_update" gravity="center_vertical" foreground="?android:attr/selectableItemBackgroundBorderless">
-                                        <text textSize="15" text="{{language['examine_update']}}" textColor="#080808" margin="25 0 0 0" gravity="center_vertical" />
+                                        <text textSize="15" text="{{language['examine_update']}}" textColor="#080808" margin="25 10" gravity="center_vertical" />
                                         <text layout_weight="1" />
                                     </horizontal>
 
