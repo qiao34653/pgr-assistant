@@ -1222,7 +1222,7 @@ ui._bg.on("click", function () {
         }
         if (language.server_name.length <= 1) {
             log(language.server_name[0].package_name)
-            tool.writeJSON("包名", package[0].package_name);
+            tool.writeJSON("包名", language.server_name[0].package_name);
             开始运行jk();
         } else {
             appnameui.fg_.setDataSource(language.server_name);
@@ -1283,7 +1283,7 @@ function 开始运行jk(jk, tips_) {
           console.error("请不要随便从横屏开始运行\n可能会导致悬浮窗大小异常");
           use.Dialog_Tips("温馨提示", "请不要随便从横屏开始运行\n可能会导致悬浮窗大小异常")
       }*/
-    if (!files.exists("./library/gallery/主页-展开.png")) {
+    if (!files.exists("./library/gallery/返回.png")) {
         use.Dialog_Tips("确认图库", "当前图库不完整,请在左上角头像-检查图库进行更换!")
         return;
     }

@@ -85,6 +85,9 @@ var ocr_modular = {
                         case "已售馨":
                             retext = "已售罄";
                             break
+                        case "日流":
+                            retext = "交流";
+                            break
                     }
                     retext = retext.replace("エ", "工");
                     retext = retext.replace(/(指辉|指择)/g, '指挥')

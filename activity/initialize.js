@@ -19,13 +19,15 @@ try {
 
                 <vertical >
                     <text text="{{language['tips']}}" margin="10 0" />
-
+                    <text id="adaption" textColor="#03a9f4" text="{{language['adaption']}}" layout_gravity="center"  padding="10 8" w="auto" h="auto" foreground="?attr/selectableItemBackground" clickable="true" />
+                   
                     <linear w="*" gravity="center">
 
                         <text id="preset" textColor="#03a9f4" text="{{language['preset']}}"  padding="10 8" w="auto" h="auto" foreground="?attr/selectableItemBackground" clickable="true" />
                         <text id="export" textColor="#03a9f4" text="{{language['export']}}"  padding="10 8" w="auto" h="auto" foreground="?attr/selectableItemBackground" clickable="true" />
                     </linear>
-
+                  
+                  <vertical id="interface" >
                     <linear gravity="center" margin="0 -2">
                         <text text="{{language['hint1']}}" textSize="15" marginLeft="5" />
                         <View bg="#f5f5f5" w="*" h="2" />
@@ -132,7 +134,7 @@ try {
 
                     </horizontal>
                     <vertical marginBottom='50'>
-
+                  </vertical>
                     </vertical>
                 </vertical>
 
@@ -241,7 +243,10 @@ try {
         }
     });
 
-
+    ui.adaption.click(()=>{
+        self_adaption();
+       
+    })
     ui.preset.on("click", () => {
         var dir = "./library/coordinate/";
         var jsFiles = files.listDir(dir, function (name) {
@@ -352,6 +357,73 @@ try {
         }
     });
 
+    function self_adaption(){
+    //获取ui.interface下的所有输入框
+    ui.post(() => {
+        for (let i = 0; i < ui.interface.getChildCount(); i++) {
+            let view_aggregate = ui.interface.getChildAt(i)
+            //不知道咋判断视图类型
+            if (view_aggregate.toString().indexOf("JsListView") > 0) {
+                for (let j = 0; j < view_aggregate.getChildCount(); j++) {
+                    let list_horizontal = view_aggregate.getChildAt(j)
+                    for (let l = 0; l < list_horizontal.getChildCount(); l++) {
+                        let list_horizontal_aggregate = list_horizontal.getChildAt(l);
+                        if (list_horizontal_aggregate.toString().indexOf("JsEditText") > 0 && list_horizontal_aggregate.getInputType() == 2) {
+
+                            console.info(list_horizontal_aggregate.getText())
+                            ui.run(() => {
+                                list_horizontal_aggregate.setText(adaption(list_horizontal_aggregate.getText(), list_horizontal_aggregate.getHint() == "x" ? true : false).toString())
+                            })
+                        }
+                    }
+
+                }
+
+            } else if (view_aggregate.toString().indexOf("JsLinearLayout") > 0) {
+                for (let k = 0; k < view_aggregate.getChildCount(); k++) {
+                    let son_view = view_aggregate.getChildAt(k);
+                    if (son_view.toString().indexOf("JsEditText") > 0 && son_view.getInputType() == 2) {
+
+                        console.info(son_view.getText())
+                        ui.run(() => {
+                            son_view.setText(adaption(son_view.getText(), son_view.getHint() == "x" ? true : false).toString());
+                        })
+                    }
+                }
+
+            }
+
+        }
+        toastLog("换算完成");
+    }, 1000)
+
+
+    function adaption(value, type) {
+
+        /**
+         * 多分辨率x值自适应兼容
+         * @param {number} value 
+         * @returns {number}
+         */
+        function frcx(value) {
+            return Math.floor((height / 2160) * value);
+        }
+
+        /**
+         * 多分辨率y值自适应兼容
+         * @param {number} value 
+         * @returns {number}
+         */
+        function frcy(value) {
+            return Math.floor((width / 1080) * value);
+        }
+       
+        value = Number(value);
+        return type ? frcx(value) : frcy(value)
+
+    }
+
+}
     function stockpile(value) {
         let message = [];
         var 返回 = [Number(ui.返回.getChildAt(2).getText()), Number(ui.返回.getChildAt(4).getText())];

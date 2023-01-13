@@ -370,7 +370,7 @@ function 指挥局() {
             break
         }
     }
-    if (ITimg.ocr("岁雪新宵", { timing: 1500, nods: 1500, area: "左上半屏", part: true, })) {
+    if (ITimg.ocr("岁雪新宵", { timing: 1500, nods: 1500, area: "右上半屏", part: true, })) {
         swipe(frcx(300), frcy(800), frcx(550), frcy(1000), 1200);
     } else {
         //移动小人手势步骤,从x1,y1,到x2,y2;用时1.7秒
@@ -879,7 +879,7 @@ function 宿舍_家具制造() {
 
 
 function 战斗() {
-
+    helper = tool.readJSON("helper");
     Floaty.emit("展示文本", "状态", "状态：准备作战中")
     if (ITimg.ocr("任务", { area: "右半屏", }) == false && ITimg.ocr("战斗", { area: "右半屏", refresh: false, }) == false) {
         //返回主页
@@ -985,9 +985,10 @@ function 战斗() {
 
     sleep(1500)
     helper = tool.readJSON("helper");
+    let serological;
     //你可以直接用固定坐标点击
-    if (helper.挑战次数) {
-        let serological = ITimg.picture("战斗-次数+", { action: 5, area: "下半屏", threshold: 0.7 })
+    if (helper.挑战次数 > 0) {
+        serological = ITimg.picture("战斗-次数+", { action: 5, area: "下半屏", threshold: 0.7 })
         if (serological) {
             //小于7次,逐个点击
             if (height.挑战次数 <= 7) {
@@ -999,10 +1000,18 @@ function 战斗() {
             } else {
                 click(serological.right - 25, serological.y + serological.h / 2);
                 sleep(150);
+                if (helper.注射血清 > 0) {
+                    click(serological.x + 25, serological.y + serological.h / 2);
+                    sleep(150);
+                }
             }
         } else {
             toastLog("无法调整挑战次数\n请检查图库图片: 战斗-次数+.png");
         }
+
+    } else {
+        toastLog("没有可挑战次数")
+        return
     }
     // ITimg.ocr("MAX", { action: 4, timing: 500, area: "下半屏", part: true })
     ITimg.ocr("确认出战", { action: 4, timing: 2000, part: true, });
@@ -1019,8 +1028,12 @@ function 战斗() {
                     }
                 };
             }
+            //点击MAX;
+            click(serological.right - 25, serological.y + serological.h / 2);
             sleep(500)
-            ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右下半屏" });
+            if (!ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右上半屏" })) {
+                ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右上半屏", threshold: 0.7 });
+            };
             // ITimg.picture("注射血清-取消",{action:0,timing:1000,area:"下半屏"})
 
             ITimg.ocr("确认出战", { action: 4, timing: 2000, part: true, });
@@ -1302,11 +1315,16 @@ function 领取任务奖励(value) {
         return
     }
     ITimg.ocr("每日", { action: 1, timing: 1500, area: "左上半屏", })
-    if (ITimg.ocr("一键领取", { action: 0, timing: 7000, area: "上半屏", })) {
-        click(height / 2, width - 80);
-        sleep(1000);
-        helper.任务状态.每日登录 = true;
-        tool.writeJSON("任务状态", helper.任务状态);
+    if (ITimg.ocr("一键领取", { action: 0, timing: 2000, area: "上半屏", })) {
+        while (true) {
+            if (ITimg.picture("获得奖励", { action: 0, timing: 1000, nods: 1000, area: "上半屏" })) {
+                click(height / 2, width - 80);
+                sleep(1000);
+                helper.任务状态.每日登录 = true;
+                tool.writeJSON("任务状态", helper.任务状态);
+            }
+        }
+
     }
 
     if (!value) {

@@ -638,8 +638,9 @@ function 图库下载(link, name, item) {
             if (X.data == "下载完成") {
                 let event_ = events.broadcast.listeners("download" + datali.id)[0];
                 events.broadcast.removeListener("download" + datali.id, event_);
-               removeByVal(gallery_link, "使用中", "修改");
                 if (item != undefined) {
+                    removeByVal(gallery_link, "使用中", "修改");
+              
                     setTimeout(function() {
 
                         if (更换图库(name)) {
