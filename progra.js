@@ -293,7 +293,7 @@ function 采购() {
     if (ITimg.ocr("补给包", { action: 0, timing: 1200, area: "左上半屏", part: true, })) {
         ITimg.ocr("日常补给", { action: 1, timing: 2000, area: "左上半屏", part: true, })
 
-        if (ITimg.ocr("每日", { action: 1, timing: 1500, area: "左上半屏", part: true, })) {
+        if (ITimg.ocr("每日", { action: 1, timing: 1500, area: "左上半屏", part: true, })||ITimg.ocr("免费", { action: 1, timing: 1500, area: "左上半屏", part: true, })) {
             ITimg.ocr("购买", { action: 1, timing: 1500, area: "下半屏", part: true })
             click(height / 2, width - 80);
             sleep(1000);

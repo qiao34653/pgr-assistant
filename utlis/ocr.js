@@ -86,6 +86,7 @@ var ocr_modular = {
                         case "已售馨":
                             retext = "已售罄";
                             break
+                            case "石流":
                         case "日流":
                             retext = "交流";
                             break
