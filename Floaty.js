@@ -17,7 +17,8 @@ var blockHandle = threads.start(function () {
 
 var use = {};
 var tool = require("./utlis/app_tool.js");
-
+var theme = require("./theme.js");
+var language = theme.language.floaty;
 var helper = tool.readJSON("helper");
 
 //图标运行状态,是否手动暂停
@@ -288,8 +289,7 @@ function 悬浮窗监听(window) {
                 toastLog("还没有相关设置")
                 break;
             case 功能图标[3]:
-                toastLog("还没有相关设置")
-               // 主页设置()
+                 主页设置()
                 break;
             case 功能图标[4]:
 
@@ -352,9 +352,9 @@ function 执行次数() {
             <Switch id="ysrh" checked="{{helper.黑卡}}" text="仅使用药剂恢复血清" visibility="gone" padding="6 6 6 6" textSize="16sp" />
             <horizontal gravity="center" marginLeft="5">
                 <text id="mr1" text="挑战上限:" textSize="15" textColor="#212121" />
-                 <input id="wordname" inputType="number" hint="{{helper.挑战次数}}次" layout_weight="1" paddingLeft="6" w="auto" />
+                 <input id="input_challenge" inputType="number" hint="{{helper.挑战次数}}次" layout_weight="1" paddingLeft="6" w="auto" />
                 <text id="mr2" text="磕药/黑卡:" textSize="15" textColor="#212121" />
-                <input id="wordname2" inputType="number" hint="{{helper.注射血清}}个" layout_weight="1" w="auto" />
+                <input id="input_serum" inputType="number" hint="{{helper.注射血清}}个" layout_weight="1" w="auto" />
             </horizontal>
             <linear >
                 <button id="buiok" text="确认设置" margin="0 -5 0 -4" layout_weight="1" style="Widget.AppCompat.Button.Colored" h="auto" />
@@ -377,13 +377,13 @@ function 执行次数() {
     });
 
    
-    rewriteView.wordname.on("key", function (keyCode, event) {
+    rewriteView.input_challenge.on("key", function (keyCode, event) {
         if (event.getAction() == 0 && keyCode == 66) {
             输入框事件()
             event.consumed = true;
         }
     });
-    rewriteView.wordname2.on("key", function (keyCode, event) {
+    rewriteView.input_serum.on("key", function (keyCode, event) {
         if (event.getAction() == 0 && keyCode == 66) {
             输入框事件()
             event.consumed = true;
@@ -395,30 +395,30 @@ function 执行次数() {
    
     function 输入框事件() {
       
-        var rwt = rewriteView.wordname.text(),
-            rwt2 = rewriteView.wordname2.text();
+        var rwt = rewriteView.input_challenge.text(),
+            rwt2 = rewriteView.input_serum.text();
           
         if (rwt.length > 3) {
-            rewriteView.wordname.setError("最高999次");
+            rewriteView.input_challenge.setError("最高999次");
             return
         };
     
         if (rwt2.length > 2) {
-            rewriteView.wordname2.setError("使用药剂、黑卡\n恢复血清最高99个");
+            rewriteView.input_serum.setError("使用药剂、黑卡\n恢复血清最高99个");
             return
         };
         if (rwt2.length > 0) {
             tool.writeJSON("注射血清", rwt2)
             record("设置了磕药/黑卡：" + rwt2 + "个");
         } else {
-            rewriteView.wordname2.setError("请输入数字");
+            rewriteView.input_serum.setError("请输入数字");
         };
 
         if (rwt.length > 0) {
             tool.writeJSON("挑战次数", rwt);
             record("设置了挑战次数上限：" + rwt + "次");
         } else {
-            rewriteView.wordname.setError("请输入数字");
+            rewriteView.input_challenge.setError("请输入数字");
         };
      
 
@@ -433,17 +433,44 @@ function 执行次数() {
             window.tod.setText("挑战：可挑战次数:"+helper.挑战次数);
             window.tof.setText("血清：可使用:"+helper.注射血清+"&已使用:"+helper.已注射血清);
             
-            rewriteView.wordname.setHint(" " + helper.挑战次数);
+            rewriteView.input_challenge.setHint(" " + helper.挑战次数);
          
-            rewriteView.wordname2.setHint(" " + helper.注射血清);
-            rewriteView.wordname.setText("");
-            rewriteView.wordname2.setText("");
+            rewriteView.input_serum.setHint(" " + helper.注射血清);
+            rewriteView.input_challenge.setText("");
+            rewriteView.input_serum.setText("");
          
 
         });
         rewriteDialogs.dismiss();
 
     }
+}
+
+function 主页设置() {
+    helper = tool.readJSON("helper");
+
+    let setupView = ui.inflate(
+        <vertical margin="10 0">
+            <Switch id="dorm_series" checked="{{helper.dorm_series}}" text="{{language.dorm_series}}" padding="6 6 6 6" textSize="16sp" />
+
+        </vertical>);
+    var setup = dialogs.build({
+        customView: setupView,
+        wrapInScrollView: true,
+        autoDismiss: true
+    }).on("dismiss", (dialog) => {
+        setupView = null;
+        setup = null;
+    })
+
+    setupView.dorm_series.click((view)=>{
+     tool.writeJSON("宿舍系列",view.checked);
+    });
+
+   //    checked ? setupView.gmcs.attr("visibility", "visible") : setupView.gmcs.attr("visibility", "gone");
+      
+    setup.show();
+
 }
 
 

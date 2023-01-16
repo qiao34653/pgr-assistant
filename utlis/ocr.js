@@ -79,6 +79,7 @@ var ocr_modular = {
                             retext = "宿舍";
                             break
                         case "-键领取":
+                            case "键领取":
                             retext = "一键领取";
                             break
                       

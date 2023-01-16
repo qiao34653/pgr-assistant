@@ -321,7 +321,11 @@ try {
                 let item = itemHolder.item;
                 coord_dialog.dismiss();
                 let coord = JSON.parse(files.read(item.path));
-                update(coord)
+                try{
+                update(coord);
+                }catch(e){
+                    toastLog(language.fill_tips+e)
+                }
             })
         });
 
@@ -358,6 +362,8 @@ try {
     });
 
     function self_adaption(){
+        let coord = JSON.parse(files.read("./library/coordinate/1080x2160.json"));
+                update(coord)
     //获取ui.interface下的所有输入框
     ui.post(() => {
         for (let i = 0; i < ui.interface.getChildCount(); i++) {

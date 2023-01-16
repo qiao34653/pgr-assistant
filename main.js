@@ -995,7 +995,20 @@ ui.depletion_way1.on("check", function (checked) {
     tool.writeJSON("战斗", helper.战斗);
 });
 ui.depletion_way2.on("check", function (checked) {
-    if (checked) toastLog("暂时还未有活动材料开放");
+    if (checked) toastLog("暂时不支持此次活动材料");
+});
+
+ui.input_challenge.on("key", function (keyCode, event) {
+    if (event.getAction() == 0 && keyCode == 66) {
+        tool.writeJSON("挑战次数",Numbr(ui.input_challenge.getText()))
+        event.consumed = true;
+    }
+});
+ui.input_serum.on("key", function (keyCode, event) {
+    if (event.getAction() == 0 && keyCode == 66) {
+        tool.writeJSON("注射血清",Numbr(ui.input_serum.getText()))
+        event.consumed = true;
+    }
 });
 
 

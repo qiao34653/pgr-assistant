@@ -152,7 +152,9 @@ function 主程序() {
     宿舍();
     if (helper.血清) {
         //领取每日登录血清
+        if(!helper.任务状态.每日登录){
         领取任务奖励(true);
+        }
         //消耗血清
         战斗();
     }
@@ -418,9 +420,18 @@ function 宿舍() {
         toastLog("无法识别到宿舍");
         return
     }
+    let matching_i=0;
     while (true) {
         if (ITimg.picture("宿舍-委托", { timing: 1000, nods: 2000, area: "下半屏" })) {
             break
+        }else{
+            matching_i++;
+            if(matching_i>15){
+                toastLog("宿舍-委托多次匹配失败,请确认图库小图片是否可以正常使用");
+                Floaty.emit("展示文本","状态","状态:宿舍-委托多次匹配失败");
+                Floaty.emit("暂停", "结束程序");
+                break
+            }
         }
 
         if (ITimg.ocr("任务", { area: "右半屏", }) == true && ITimg.ocr("战斗", { refresh: false, }) == true) {
@@ -1018,6 +1029,7 @@ function 战斗() {
 
     if (ITimg.picture("注射血清-确定", { timing: 100, area: "右下半屏" })) {
         if (helper.注射血清 > 0) {
+            helper.已注射血清 = 0;
             for (let i = 0; i < helper.注射血清; i++) {
                 ITimg.picture("注射血清-确定", { action: 0, timing: 1000, area: "右下半屏" })
                 if (ITimg.picture("获得奖励", { action: 0, timing: 1000, area: "上半屏" })) {
@@ -1029,11 +1041,12 @@ function 战斗() {
                 };
             }
             //点击MAX;
-            click(serological.right - 25, serological.y + serological.h / 2);
-            sleep(500)
+           sleep(500)
             if (!ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右上半屏" })) {
                 ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右上半屏", threshold: 0.7 });
             };
+            click(serological.right - 25, serological.y + serological.h / 2);
+           sleep(200);
             // ITimg.picture("注射血清-取消",{action:0,timing:1000,area:"下半屏"})
 
             ITimg.ocr("确认出战", { action: 4, timing: 2000, part: true, });
@@ -1322,9 +1335,13 @@ function 领取任务奖励(value) {
                 sleep(1000);
                 helper.任务状态.每日登录 = true;
                 tool.writeJSON("任务状态", helper.任务状态);
+                break
             }
         }
 
+    }else{
+        helper.任务状态.每日登录 = true;
+        tool.writeJSON("任务状态", helper.任务状态);
     }
 
     if (!value) {
@@ -1386,6 +1403,7 @@ function 领取任务奖励(value) {
                 while (true) {
                     if (ITimg.picture("获得奖励", { action: 0, timing: 1000, area: "上半屏" })) {
                         tool.writeJSON("周常任务", false);
+                        break
                     }
                 }
             }
