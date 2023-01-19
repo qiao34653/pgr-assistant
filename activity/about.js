@@ -140,7 +140,8 @@ ui.donation.on("click", () => {
 });
 
 ui.examine_update.click(() => {
-    toastLog("暂未开发")
+    engines.execScriptFile("./update.js");
+   // toastLog("暂未开发")
 })
 
 

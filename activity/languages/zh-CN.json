@@ -141,6 +141,7 @@
         "update": "更新",
         "cancel":"取消",
         "confirm":"确认",
+        "update_fail_internet":"资源访问失败,更新失败,请检查网络",
         "update_fail": "更新失败",
         "update_success": "更新成功",
         "wait_get_update_info": "等待获取更新信息",

@@ -152,8 +152,8 @@ function 主程序() {
     宿舍();
     if (helper.血清) {
         //领取每日登录血清
-        if(!helper.任务状态.每日登录){
-        领取任务奖励(true);
+        if (!helper.任务状态.每日登录) {
+            领取任务奖励(true);
         }
         //消耗血清
         战斗();
@@ -251,7 +251,7 @@ function 进入主页() {
     while (true) {
         sleep(1000);
         ITimg.picture("返回", { action: 0, timing: 1500, area: "左上半屏", })
-        if (ITimg.ocr("任务", { timing: 3000, area: "右半屏", part: true, }) == true && ITimg.ocr("战斗", { timing: 3000, area: "右半屏", refresh: false, part: true, }) == true) {
+        if (ITimg.ocr("任务", { timing: 1000, area: "右半屏", part: true, }) == true && ITimg.ocr("战斗", { timing: 2000, area: "右半屏", part: true, }) == true) {
             click(coordinate.coordinate.主页展开.x, coordinate.coordinate.主页展开.y)
             sleep(1000)
             break
@@ -293,7 +293,7 @@ function 采购() {
     if (ITimg.ocr("补给包", { action: 0, timing: 1200, area: "左上半屏", part: true, })) {
         ITimg.ocr("日常补给", { action: 1, timing: 2000, area: "左上半屏", part: true, })
 
-        if (ITimg.ocr("每日", { action: 1, timing: 1500, area: "左上半屏", part: true, })||ITimg.ocr("免费", { action: 1, timing: 1500, area: "左上半屏", part: true, })) {
+        if (ITimg.ocr("每日", { action: 1, timing: 1500, area: "左上半屏", part: true, }) || ITimg.ocr("免费", { action: 1, timing: 1500, area: "左上半屏", part: true, })) {
             ITimg.ocr("购买", { action: 1, timing: 1500, area: "下半屏", part: true })
             click(height / 2, width - 80);
             sleep(1000);
@@ -338,14 +338,17 @@ function 交流() {
         sleep(3000)
     }
     click(height / 2, width / 2);
-    sleep(1000)
+    sleep(1200)
     if (ITimg.ocr("交流", { action: 0, timing: 2500, area: "左上半屏", part: true })) {
         helper.任务状态.助理交流 = true;
-        tool.writeJSON("任务状态", helper.任务状态)
+        tool.writeJSON("任务状态", helper.任务状态);
+        //点击返回
+        click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
+        sleep(2000)
+    }else{
+        toastLog("无法匹配到交流");
     };
-    //点击返回
-    click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
-    sleep(2000)
+
 }
 
 
@@ -372,11 +375,12 @@ function 指挥局() {
             break
         }
     }
+    
     if (ITimg.ocr("岁雪新宵", { timing: 1500, nods: 1500, area: "右上半屏", part: true, })) {
-        swipe(frcx(300), frcy(800), frcx(550), frcy(1000), 1200);
+        swipe(parseInt(height/7.2), parseInt(width/1.35), parseInt(height/4), parseInt(width/1.08), 1200);
     } else {
         //移动小人手势步骤,从x1,y1,到x2,y2;用时1.7秒
-        swipe(frcx(362), frcy(778), frcx(608), frcy(790), 1700);
+        swipe(parseInt(height/6), parseInt(width/1.39), parseInt(height/3.55), parseInt(width/1.35), 1700);
     }
 
     /*
@@ -416,19 +420,19 @@ function 宿舍() {
         click(coordinate.coordinate.主页面.x, coordinate.coordinate.主页面.y);
         sleep(3000)
     }
-    if (!ITimg.ocr("宿舍", { action: 0, timing: 3000, refresh: false, })) {
+    if (!ITimg.ocr("宿舍", { action: 0, timing: 3000, })) {
         toastLog("无法识别到宿舍");
         return
     }
-    let matching_i=0;
+    let matching_i = 0;
     while (true) {
         if (ITimg.picture("宿舍-委托", { timing: 1000, nods: 2000, area: "下半屏" })) {
             break
-        }else{
+        } else {
             matching_i++;
-            if(matching_i>15){
+            if (matching_i > 15) {
                 toastLog("宿舍-委托多次匹配失败,请确认图库小图片是否可以正常使用");
-                Floaty.emit("展示文本","状态","状态:宿舍-委托多次匹配失败");
+                Floaty.emit("展示文本", "状态", "状态:宿舍-委托多次匹配失败");
                 Floaty.emit("暂停", "结束程序");
                 break
             }
@@ -1041,12 +1045,12 @@ function 战斗() {
                 };
             }
             //点击MAX;
-           sleep(500)
+            sleep(500)
             if (!ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右上半屏" })) {
                 ITimg.picture("宿舍-家具-关闭", { action: 0, timing: 2000, area: "右上半屏", threshold: 0.7 });
             };
             click(serological.right - 25, serological.y + serological.h / 2);
-           sleep(200);
+            sleep(200);
             // ITimg.picture("注射血清-取消",{action:0,timing:1000,area:"下半屏"})
 
             ITimg.ocr("确认出战", { action: 4, timing: 2000, part: true, });
@@ -1202,7 +1206,7 @@ function 纷争战区() {
         sleep(1000);
         if (!ITimg.ocr("确定", { action: 1, timing: 2000, area: "右半屏" })) {
             if (ITimg.ocr("通关", { part: true, refresh: false, }) || ITimg.ocr("个人积分", { part: true, refresh: false, })) {
-                if (ITimg.ocr("第1", { action: 4, timing: 1500, part: true, })) {
+                if (ITimg.ocr("第1", { action: 4, timing: 1500, part: true, })||ITimg.ocr("第1", { action: 4, timing: 1500, part: true,area:"左半屏" })) {
                     if (ITimg.ocr("自动作战", { action: 1, timing: 2000, area: "下半屏", part: true, })) {
                         click(height / 2, width - 80);
                         sleep(300);
@@ -1339,7 +1343,7 @@ function 领取任务奖励(value) {
             }
         }
 
-    }else{
+    } else {
         helper.任务状态.每日登录 = true;
         tool.writeJSON("任务状态", helper.任务状态);
     }

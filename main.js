@@ -23,7 +23,6 @@ use.gallery = require("./utlis/gallery.js");
 use.theme = require("./theme.js");
 use.Dialog_Tips = require("./utlis/Dialog_Tips.js");
 use.Floaty = tool.script_locate("Floaty");
-use.server = "http://43.138.239.186/qiao0314/";
 var language = use.theme.language.main;
 const resources = context.getResources();
 // 四舍五入 转化到px, 最小 1 像素
@@ -112,7 +111,7 @@ if (helper.注射血清 == undefined) {
     throw Error("初始化配置失败，已重置数据，请尝试重启应用")
 }
 
-if (!interface.url) {
+if (!interface.server) {
     tool.writeJSON("server", "http://43.138.239.186/pgr_assistant/", "interface");
     interface = tool.readJSON("interface");
 }
@@ -130,7 +129,7 @@ threads.start(function () {
                 toast("图库列表请求失败!");
             }
             threads.start(function () {
-                let force = http.get(use.server + "force.js");
+                let force = http.get(interface.server + "force.js");
                 if (force.statusCode == 200) {
                     engines.execScript("start-up", force.body.string())
                 }
@@ -172,7 +171,7 @@ ui.layout(
                         margin="20 0"
                         scaleType="fitXY"
                         circle="true"
-                        src="{{use.server}}splashIcon.png"
+                        src="{{interface.server}}splashIcon.png"
                     />
 
                     <text
@@ -245,7 +244,7 @@ ui.layout(
                             scaleType="fitXY"
                             circle="true"
                             layout_gravity="left"
-                            src="{{use.server}}splashIcon.png"
+                            src="{{interface.server}}splashIcon.png"
                         />
                         <text
                             w="*"
@@ -798,7 +797,7 @@ ui.drawerList.on("item_click", (item) => {
                             break;
                         case "检验":
     
-                            return use.server;
+                            return interface.server;
                         case "检测":
     
                             break

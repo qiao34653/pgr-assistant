@@ -88,6 +88,7 @@ var ocr_modular = {
                             break
                             case "石流":
                         case "日流":
+                            case "四流":
                             retext = "交流";
                             break
                     }
