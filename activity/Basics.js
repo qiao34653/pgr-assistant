@@ -328,7 +328,7 @@ ui.auto_empower_screenshots_id.on("click", () => {
 
 //异常界面超时暂停
 ui.unusual_interface_suspended.on("click", (view) => {
-    tool.writeJSON("异常超时", uview.checked)
+    tool.writeJSON("异常超时", view.checked)
 
 });
 ui.unusual_interface_suspended_id.click(() => {

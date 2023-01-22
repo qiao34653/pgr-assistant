@@ -47,7 +47,7 @@ var layoutAttribute = {
     },
     //设置悬浮窗的尺寸和启动时的初始位置
     whole: {
-        w: zoom(650),
+        w: zoom(600),
         h: zoom(240),
         iniX: zoom(65),
         iniY: zoom(130)
@@ -79,7 +79,7 @@ var screenAttribute = {
 var 功能图标 = [
     "@drawable/ic_pause_circle_outline_black_48dp",
     "file://./res/ic_Rational_exchange_black_48dp.png",
-    "@drawable/ic_assignment_ind_black_48dp",
+   // "@drawable/ic_assignment_ind_black_48dp",
     "@drawable/ic_settings_applications_black_48dp",
     "@drawable/ic_power_settings_new_black_48dp",
 ];
@@ -117,9 +117,9 @@ function 创建悬浮窗() {
         <frame w="auto" id="parent" h="auto">
             <vertical id="homepage" w="{{layoutAttribute.whole.w}}px" h="{{layoutAttribute.whole.h}}px" bg="{{layoutAttribute.setColor.bg}}">
                 <frame id="title" w="{{layoutAttribute.whole.w - layoutAttribute.windowOperate.w}}px" h="{{layoutAttribute.title.h}}px" layout_gravity="right">
-                    <text id="name" marginLeft="{{zoom(25)}}px" w="{{zoom(460)}}px" text="加载中..." textColor="{{layoutAttribute.setColor.theme}}" textSize="{{zoom(40)}}px" gravity="left|center" />
+                    <text id="name" marginLeft="{{zoom(25)}}px" w="{{zoom(460)}}px" text="战斗/宿舍" textColor="{{layoutAttribute.setColor.theme}}" textSize="{{zoom(40)}}px" gravity="left|center" />
                     <horizontal w="*" gravity="right" id="operation" >
-                        <grid id="功能" w="auto" h="auto" spanCount="5" layout_gravity="right">
+                        <grid id="功能" w="auto" h="auto" spanCount="4" layout_gravity="right">
                             <img text="1" w="{{zoom(75)}}px" h="*" src="{{this}}" tint="{{layoutAttribute.setColor.theme}}" />
                         </grid>
                     </horizontal>
@@ -286,12 +286,9 @@ function 悬浮窗监听(window) {
              
                 break;
             case 功能图标[2]:
-                toastLog("还没有相关设置")
+                主页设置()
                 break;
             case 功能图标[3]:
-                 主页设置()
-                break;
-            case 功能图标[4]:
 
                 eliminate = true;
                 暂停(true);
@@ -349,7 +346,20 @@ function 执行次数() {
             <View bg="#ffffff" h="1" w="auto" />
             
             <View bg="#000000" h="1" w="auto" />
+            <Switch  id="depletion_serum"
+                                checked="{{helper.血清}}"
+                                text="{{language['depletion_serum']}}"
+                                padding="6 6 6 6"
+                                textSize="16"
+                            />
+                            <radiogroup id="depletion_way" orientation="horizontal" h="auto" visibility="{{helper.血清 ? 'visible' : 'gone'}}">
+                                <radio id="depletion_way1" text="{{language['depletion_way1']}}" w="auto"  />
+                                <spinner id="resources_type" textSize="16" entries="{{language['resources_type']}}"
+                                    layout_gravity="right|center" w="auto" h="20dp" visibility="gone" />
+                                <radio id="depletion_way2" text="{{language['depletion_way2']}}" w="auto"  />
+                            </radiogroup>
             <Switch id="ysrh" checked="{{helper.黑卡}}" text="仅使用药剂恢复血清" visibility="gone" padding="6 6 6 6" textSize="16sp" />
+       
             <horizontal gravity="center" marginLeft="5">
                 <text id="mr1" text="挑战上限:" textSize="15" textColor="#212121" />
                  <input id="input_challenge" inputType="number" hint="{{helper.挑战次数}}次" layout_weight="1" paddingLeft="6" w="auto" />
@@ -368,6 +378,82 @@ function 执行次数() {
         rewriteView = null;
         rewriteDialogs = null;
     })
+    if (!helper.战斗.活动) {
+        rewriteView.depletion_way1.checked = true;
+        rewriteView.resources_type.setVisibility(0);
+        // let 资源类型 = language.resources_type.split("|");
+        switch (helper.战斗.资源名称) {
+            case "作战补给":
+                rewriteView.resources_type.setSelection(0);
+                break
+            case "后勤保养":
+                rewriteView.resources_type.setSelection(1);
+                break;
+            case "军备突破":
+                rewriteView.resources_type.setSelection(2);
+                break;
+            case "成员特训":
+                rewriteView.resources_type.setSelection(3);
+                break;
+            case "螺母大作战":
+                rewriteView.resources_type.setSelection(4);
+                break;
+            case "战技演习":
+                rewriteView.resources_type.setSelection(5);
+                break;
+        };
+    } else {
+        rewriteView.depletion_way2.checked = true;
+
+    }
+
+    rewriteView.depletion_serum.on("click", function (view) {
+        checked = view.checked;
+        rewriteView.depletion_way.setVisibility(checked ? 0 : 8);
+    //    rewriteView.depletion_manage.setVisibility(checked ? 0 : 8)
+        tool.writeJSON("血清", checked)
+    })
+    rewriteView.depletion_way1.on("check", function (checked) {
+        rewriteView.resources_type.setVisibility(checked ? 0 : 8);
+        helper.战斗.活动 = !checked;
+        tool.writeJSON("战斗", helper.战斗);
+    });
+    rewriteView.depletion_way2.on("check", function (checked) {
+        if (checked) toastLog("暂时不支持此次活动材料");
+    });
+
+    let updater;
+    rewriteView.resources_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener({
+    onItemSelected: function (parent, view, resource_name, id) {
+        if (!updater) {
+            updater = true;
+            return
+        }
+        switch (resource_name) {
+            case 0:
+                resource_name = "作战补给"
+                break
+            case 1:
+                resource_name = "后勤保养"
+                break;
+            case 2:
+                resource_name = "军备突破"
+                break;
+            case 3:
+                resource_name = "成员特训"
+                break;
+            case 4:
+                resource_name = "螺母大作战"
+                break;
+            case 5:
+                resource_name = "战技演习"
+                break;
+        };
+        helper.战斗.资源名称 = resource_name;
+        tool.writeJSON("战斗", helper.战斗);
+    }
+}));
+
 
     rewriteView.ysrh.on("check", (checked) => {
         tool.writeJSON("黑卡", checked);
@@ -424,7 +510,7 @@ function 执行次数() {
 
         
         if (rwt.length == 0 && rwt2.length == 0) {
-            toastLog("没有输入任何内容，仅更换执行选项，需要手动暂停当前运行选项");
+            toastLog("没有输入任何内容，仅生效部分选项");
         }
          rwt = null;
         rwt2 = null;
@@ -451,8 +537,10 @@ function 主页设置() {
 
     let setupView = ui.inflate(
         <vertical margin="10 0">
-            <Switch id="dorm_series" checked="{{helper.dorm_series}}" text="{{language.dorm_series}}" padding="6 6 6 6" textSize="16sp" />
-
+            <Switch id="dorm_series" checked="{{helper.宿舍系列}}" text="{{language.dorm_series}}" padding="6 6 6 6" textSize="16sp" />
+            <Switch id="handbook" checked="{{helper.手册经验}}" text="{{language['handbook']}}"
+                                padding="6 6 6 6"
+                                textSize="16"/>
         </vertical>);
     var setup = dialogs.build({
         customView: setupView,
@@ -670,11 +758,17 @@ function 获取屏幕方向() {
 };
 
 
-程序(helper.执行);
+程序();
 
 function 程序(implem) {
     helper = tool.readJSON("helper");
     ui.post(() => {
+        if(!helper.血清){
+         window.name.setText("宿舍系列")
+        }
+        if(!helper.宿舍系列){
+            window.name.setText("战斗任务")
+        }
         window.tod.setText("挑战：可挑战次数:"+helper.挑战次数);
         window.tof.setText("血清：可使用:"+helper.注射血清+"&已使用:"+helper.已注射血清);
     })

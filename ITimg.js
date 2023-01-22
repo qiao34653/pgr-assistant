@@ -46,15 +46,13 @@ function initialization(ocr_) {
             threads.start(function () {
                 var is;
 
-                is = 12;
-                console.info("异常界面超时暂停处理：6分钟。" + helper.执行);
+                is = 6;
+                console.info("异常界面超时暂停处理：3分钟。");
 
                 fn = function () {
                     if (cc == is && ITimg_state == null) {
-                        if (is == 12) {
-                            is = 6;
-                        } else {
-                            is = 35;
+                        if (is == 6) {
+                            is = 3;
                         }
                         toast("程序在" + is + "分钟内未能判断当前界面，状态异常，将暂停并返回桌面")
                         console.error("程序在" + is + "分钟内未能判断当前界面，状态异常，将暂停并返回桌面")

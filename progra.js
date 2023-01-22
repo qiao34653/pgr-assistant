@@ -338,7 +338,7 @@ function 交流() {
         sleep(3000)
     }
     click(height / 2, width / 2);
-    sleep(1200)
+    sleep(1800)
     if (ITimg.ocr("交流", { action: 0, timing: 2500, area: "左上半屏", part: true })) {
         helper.任务状态.助理交流 = true;
         tool.writeJSON("任务状态", helper.任务状态);
@@ -366,7 +366,7 @@ function 指挥局() {
         click(coordinate.coordinate.主页面.x, coordinate.coordinate.主页面.y);
         sleep(3000)
     }
-    if (!ITimg.ocr("公会", { action: 1, timing: 4000, area: "右半屏", part: true })) {
+    if (!ITimg.ocr("公会", { action: 4, timing: 4000, area: "右半屏", part: true })) {
         toastLog("没有识别到公会,无法执行与妙算神机交互");
         return
     }
@@ -391,7 +391,7 @@ function 指挥局() {
     */
     //等待1秒
     sleep(1000)
-    if (ITimg.ocr("算一签", { action: 1, timing: 2500, area: "右半屏", })) {
+    if (ITimg.ocr("算一签", { action: 1, timing: 2500, area: "右半屏", part:true,})) {
         //点击返回
         click(coordinate.coordinate.返回.x, coordinate.coordinate.返回.y);
         sleep(1500);
@@ -785,8 +785,8 @@ function 宿舍_抚摸() {
 
 
                 for (let i = 0; i < 6; i++) {
-                    console.info("数值:", 2.6 - x_p, ",x:", parseInt(height / (2.6 - x_p)))
-                    console.info("数值:", 0.80 + y_p, "y:", parseInt(width / (0.80 + y_p)))
+                  //  console.info("数值:", 2.6 - x_p, ",x:", parseInt(height / (2.6 - x_p)))
+                   // console.info("数值:", 0.80 + y_p, "y:", parseInt(width / (0.80 + y_p)))
 
                     points.push([parseInt(height / (2.6 - x_p)) + random(-20, 20), parseInt(width / (0.80 + y_p)) + random(-30, 10)]);
                     x_p = x_p + 0.15;
@@ -797,8 +797,8 @@ function 宿舍_抚摸() {
                 y_p = 0.7;
 
                 for (let i = 0; i < 6; i++) {
-                    console.warn("数值:", 1.7 + x_p, ",x:", parseInt(height / (1.7 + x_p)))
-                    console.warn("数值:", 5.6 - y_p, "y:", parseInt(width / (5.6 - y_p)))
+                 //   console.warn("数值:", 1.7 + x_p, ",x:", parseInt(height / (1.7 + x_p)))
+                   // console.warn("数值:", 5.6 - y_p, "y:", parseInt(width / (5.6 - y_p)))
 
                     points.push([parseInt(height / (1.7 + x_p)) + random(-20, 20), parseInt(width / (5.6 - y_p)) + random(-30, 10)]);
                     x_p = x_p + 0.15;

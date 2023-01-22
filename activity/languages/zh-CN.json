@@ -82,7 +82,13 @@
 
     },
     "floaty":{
-     "dorm_series":"宿舍系列任务"
+        "depletion_serum":"自动消耗血清",
+        "depletion_way1":"资源",
+        "depletion_way2":"活动",
+        "resources_type":"稀有意识|装备经验|装备突破|成员经验|螺母作战|技能点",
+     
+     "dorm_series":"宿舍系列任务",
+     "handbook":"领取手册经验"
     },
     "basics":{
         "volume_suspended":"音量按键暂停辅助",
@@ -92,7 +98,7 @@
         "auto_empower_screenshots":"自动授权辅助截图权限",
         "auto_empower_screenshots_description":"战双辅助是图像识别脚本程序，在工作前必须先获取屏幕截图权限！！！\n如需程序自动允许辅助截图权限，请打开该功能。如果在悬浮窗面板运行时无法申请辅助截图权限，请授权后台弹出界面权限",
         "unusual_interface_suspended":"异常界面超时暂停",
-        "unusual_interface_suspended_description":"程序在5分钟内无法判断页面则暂停程序并返回桌面，\n有效防止突发意外情况使程序无法判断页面，导致设备一直亮屏，温度过高",
+        "unusual_interface_suspended_description":"程序在3分钟内无法判断页面则暂停程序并返回桌面，\n有效防止突发意外情况使程序无法判断页面，出错进入死循环,导致设备一直亮屏，温度过高",
         "suspended_desktop":"暂停后返回桌面",
         "suspended_desktop_description":"程序被程序主动暂停时，手动暂停不会返回桌面",
         "auto_accessibility":"自启动无障碍服务",
