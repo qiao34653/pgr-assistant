@@ -1624,13 +1624,21 @@ function getpackage() {
     if (windowRoots && windowRoots.size() > 0) {
         if (windowRoots && windowRoots.size() >= 2) {
             log('windowRoots size: ' + windowRoots.size())
+               //有多个windowRoots时，最后一个比较符合前台应用
+       for (let i = windowRoots.size() - 1; i >= 0; i--) {
+        let root = windowRoots.get(i)
+          console.info(root ? root.getPackageName() : "null");
+        if (root !== null && root.getPackageName()) {
+            return root.getPackageName()
         }
-        for (let i = 0; i < windowRoots.size(); i++) {
-            let root = windowRoots.get(i)
-            if (root !== null && root.getPackageName()) {
-                return root.getPackageName()
-            }
+        
+    }
+
+        }else{
+            return windowRoots.get(0).getPackageName();
         }
+     
+
     }
     // windowRoot获取失败了通过service.getWindows获取根控件的包名，按倒序从队尾开始获取 速度相对慢一点
     try {

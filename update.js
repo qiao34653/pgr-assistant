@@ -9,6 +9,7 @@ var base_url = tool.readJSON("interface").server;
 function update(show_update_dialog) {
     let cancel = false;
     let dialog = dialogs.build({
+        type: 'app',
         content: language["wait_get_update_info"],
         positive: language["cancel"]
     }).on("positive", () => {
@@ -61,6 +62,7 @@ function update(show_update_dialog) {
 function showHistoryUpdateInfo(show_update_button) {
     let cancel = false;
     let dialog = dialogs.build({
+        type: 'app',
         content: language["wait_get_history_update_info"],
         positive: language["cancel"]
     }).on("positive", () => {
@@ -93,6 +95,7 @@ function showHistoryUpdateInfo(show_update_button) {
 function downloadFile() {
     let cancel = false;
     let dialog = dialogs.build({
+        type: 'app',
         progress: {
             max: 100,
             showMinMax: true
@@ -139,5 +142,5 @@ toupdate.update = update;
 try {
     module.exports = toupdate;
 } catch (err) {
-    toupdate.update(true)
+    toupdate.update()
 }
