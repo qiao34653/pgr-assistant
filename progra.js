@@ -297,8 +297,8 @@ function 采购() {
             ITimg.ocr("购买", { action: 1, timing: 1500, area: "下半屏", part: true })
             click(height / 2, width - 80);
             sleep(1000);
-            let week = ITimg.ocr("每周限购1", { action: 5, area: "左上半屏", part: true });
-            let free = ITimg.ocr("免费", { action: 5, refresh: false });
+            let week = ITimg.ocr("每周限购1", { action: 5, area: "左半屏", part: true });
+            let free = ITimg.ocr("免费", { action: 5, refresh: false,part:true });
 
             if (week && free) {
                 if (week.left > free.left) {
@@ -339,7 +339,7 @@ function 交流() {
     }
     click(height / 2, width / 2);
     sleep(1800)
-    if (ITimg.ocr("交流", { action: 0, timing: 2500, area: "左上半屏", part: true })) {
+    if (ITimg.ocr("交流", { action: 0, timing: 2500,nods:2500, area: "左上半屏", part: true })||ITimg.ocr("交流", { action: 0, timing: 2500, area: "左上半屏", part: true })) {
         helper.任务状态.助理交流 = true;
         tool.writeJSON("任务状态", helper.任务状态);
         //点击返回
@@ -659,6 +659,9 @@ function 宿舍_抚摸() {
             let dorm_re = (dorm[i].text.indexOf("宿舍") != -1 && dorm[i].text.indexOf("宿舍伙伴") == -1);
             if (dorm_re) {
                 dorm_re = (dorm[i].text.indexOf("宿舍事") == -1 && dorm[i].text.indexOf("宿舍币") == -1 && dorm[i].text.indexOf("宿舍执") == -1);
+            }
+            if (dorm_re) {
+                dorm_re = (dorm[i].text.indexOf("战斗/宿舍") == -1 && dorm[i].text.indexOf("宿舍任") == -1);
             }
             log("文字: " + dorm[i].text + " ,结果:" + dorm_re);
             if (dorm_re) {
@@ -1082,13 +1085,14 @@ function 战斗() {
             ITimg.ocr("返回", { action: 0, timing: 500, area: "下半屏", nods: 1500, refresh: false })
             break
         }
-        if (!ITimg.ocr("当前进度", { refresh: false, part: true, })) {
-            setTimeout(function () {
-                if (!ITimg.ocr("当前进度", { refresh: false, part: true, })) {
+        /*if (!ITimg.ocr("当前进度", { refresh: false, part: true, })) {
+           sleep(1000)
+                if (!ITimg.ocr("当前进度", { part: true, })) {
                     fight_thread = false;
                 }
-            }, 1000)
+            
         }
+        */
         if (ITimg.ocr("确定", { action: 0, timing: 1500, area: "右下半屏", nods: 1500, refresh: false, })) {
             //作战完成,终止作战方案
             fight_thread = false;
@@ -1318,6 +1322,7 @@ function 作战() {
     }
 }
 function 领取任务奖励(value) {
+    helper = tool.readJSON("helper");
     if (!helper.任务奖励) {
         return
     }
@@ -1406,11 +1411,12 @@ function 领取任务奖励(value) {
             if (ITimg.ocr("键领取", { action: 0, timing: 1000, area: "上半屏", part: true })) {
                 while (true) {
                     if (ITimg.picture("获得奖励", { action: 0, timing: 1000, area: "上半屏" })) {
-                        tool.writeJSON("周常任务", false);
                         break
                     }
                 }
             }
+            tool.writeJSON("周常任务", false);
+                     
         }
     }
 
@@ -1435,7 +1441,7 @@ function 领取手册经验() {
     click(coordinate.coordinate.手册图标位置.x, coordinate.coordinate.手册图标位置.y);
     sleep(1500);
     ITimg.ocr("确定", { action: 0, timing: 1000, area: "左半屏", })
-    if (ITimg.ocr("评定任务", { action: 1, timing: 500, area: "左下半屏", })) {
+    if (ITimg.ocr("评定任务", { action: 1, timing: 500, area: "左下半屏", part:true})) {
         ITimg.ocr("一键领取", { action: 1, timing: 1500, area: "右下半屏", });
         click(height / 2, width - 80);
         sleep(1000);

@@ -77,8 +77,8 @@ try {
                         <checkbox id="房间初始化" text="{{language['roominitialization']}}" textColor="{{theme.text}}" />
 
                     </horizontal>
-                    <list id="宿舍6房间位置">
-                        <horizontal margin="10 0">
+                    <list id="宿舍6房间位置" h="250">
+                        <horizontal margin="10 -3">
                             <text text="name:" />
                             <input id="name" layout_weight="3" inputType="textPersonName" hint="{{this.name}}" text="{{this.name ? this.name : ''}}" />
                             <text text="x:" />
@@ -464,7 +464,7 @@ try {
                     message.push('宿舍' + [i + 1] + '位置');
                     break
                 };
-                if ((宿舍6房间位置[i]['y'] = Number(ui.宿舍6房间位置.getChildAt(i).getChildAt(3).getText())) == '') {
+                if ((宿舍6房间位置[i]['y'] = Number(ui.宿舍6房间位置.getChildAt(i).getChildAt(5).getText())) == '') {
                     message.push('宿舍' + [i + 1] + ' 位置');
                 };
             }

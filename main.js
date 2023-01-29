@@ -1627,9 +1627,9 @@ threads.start(function () {
     sleep(50);
 
     if (interface.运行次数 != true && interface.公告 == true) threads.start(tishi);
-    interface = tool.readJSON("interface");
-
-
+   // interface = tool.readJSON("interface");
+ 
+   engines.execScriptFile("./update.js");
 })
 
 
