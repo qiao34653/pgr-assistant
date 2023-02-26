@@ -351,6 +351,14 @@ ui.layout(
                                 padding="6 6 6 6"
                                 textSize="16" textColor="{{use.theme.text}}"
                             />
+                            
+                             <widget-switch-se7en
+                                id="auto_use_serum"
+                                checked="{{helper.自动2血清}}"
+                                text="{{language['auto_use_serum']}}"
+                                padding="6 6 6 6"
+                                textSize="16" textColor="{{use.theme.text}}"
+                            />
                             <card w="*" id="timed_tasks_frame" visibility="visible" margin="0 0 0 1" h="40" cardCornerRadius="1"
                                 cardElevation="0dp" gravity="center_vertical" cardBackgroundColor="#00000000" >
                                 <linear clipChildren="false" elevation="0" gravity="center_vertical" margin="8 0 8 0" bg="#00000000">
@@ -1085,6 +1093,10 @@ ui.handbook.on("click", function (view) {
     tool.writeJSON("手册经验", checked)
 });
 
+ui.auto_use_serum.on("click", function (view) {
+    checked = view.checked;
+    tool.writeJSON("自动2血清", checked)
+});
 
 var timed_tasks_list = tool.readJSON("timed_tasks", []);
 
@@ -1412,7 +1424,7 @@ function 开始运行jk(jk, tips_) {
 
                 Tips_tuku_ui.wxts.setText("1. 没有适合你的图库？\n加入群聊获取教程动手制作，或使用虚拟机、模拟器等自调适合的分辨率，左边高度×右边宽度，DPI随意" +
                     "\n2. 分辨率反的？ \n请在竖屏下启动悬浮窗。华为：更改屏幕分辨率-为对应图库。模拟器：说明设置的是平板版分辨率(更换与设备分辨率相反的图库分辨率即可)。 注：更换设备分辨率后都需要到应用内更换相符合的图库")
-                Tips_tuku_ui.Device_resolution.setText("当前设备分辨率:宽" + device.widget + ",高:" + device.height)
+                Tips_tuku_ui.Device_resolution.setText("当前设备分辨率:宽" + device.width + ",高:" + device.height)
                 Tips_tuku_ui.dwh.setText("当前使用图库：" + tuku_de.name);
 
                 Tips_tuku_ui.Tips.setText("请在软件主页面-左上角头像-更换图库\n更换设备分辨率相近的图库，否则将无法正常使用本应用-辅助。\n目前，图库与设备分辨率宽度一致，而高度误差不超过230左右，或高度一致，而宽度误差不超过170左右，基本上是可以使用的，但不排除某些小图片在你的设备上无法匹配，导致某功能失效")

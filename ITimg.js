@@ -413,7 +413,7 @@ function 找图(picture, list) {
         ITimg_state.y = ITimg_state.y + random(-10, 10);
         cx = ITimg_state.x + img_small_xy.w / 2;
         cy = ITimg_state.y + img_small_xy.h / 2;
-        switch (list.action) {
+       switch (list.action) {
             case 0:
                 sleep(50);
                 //click_s(cx,cy)
@@ -455,7 +455,7 @@ function 找图(picture, list) {
     } else {
         img_small.recycle();
         sleep(list.nods);
-       console.error(picture  + " 匹配失败\n找图配置：" + JSON.stringify(list));
+       console.error(picture  + " 匹配失败\n-找图配置：" + JSON.stringify(list));
        
         return false;
 
@@ -527,12 +527,12 @@ function ocr文字识别(words, list) {
 
     if (query_ != undefined) {
         cc = threads.atomic(0);
-        console.info(words + " 匹配成功\n配置：" + JSON.stringify(list) + "内容：" + JSON.stringify(query_))
+       
+        console.info(words + " 匹配成功\n-配置：" + JSON.stringify(list) + "\n--内容：" + JSON.stringify(query_))
         switch (list.action) {
             case undefined:
                 break
             case 0:
-
                 click(query_.left + Math.floor((query_.right - query_.left) / 2), query_.top + Math.floor((query_.bottom - query_.top) / 2))
                 break;
 
@@ -558,7 +558,7 @@ function ocr文字识别(words, list) {
         return true;
     } else {
         sleep(list.nods)
-        console.error( words + " 未匹配到\n配置：" + JSON.stringify(list) + "\n识别结果：" + JSON.stringify(result));
+        console.error( words + " 未匹配到\n-配置：" + JSON.stringify(list) + "\n--识别结果：" + JSON.stringify(result));
         return false;
 
     }
