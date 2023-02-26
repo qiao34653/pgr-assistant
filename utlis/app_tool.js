@@ -291,8 +291,14 @@ function setBackgroundRoundRounded(view, list) {
  * @returns {object|boolean}
  */
 function script_locate(js) {
+    
     try {
-        for (let i = 0; i < engines.all().length; i++) {
+        let engines_ = engines.all();
+        if(!engines_){
+            return false
+        }
+            for (let i = 0; i < engines_.length; i++) {
+    
             if (engines.all()[i].getSource().toString().indexOf(js) != -1) {
                 return engines.all()[i];
             }
